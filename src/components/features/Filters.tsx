@@ -1,16 +1,16 @@
 'use client';
 
-import { useRestaurantStore } from '@/lib/store';
-import { CuisineType } from '@/lib/types';
+import { useLocationStore } from '@/lib/store';
+import { Cuisine } from '@/data/locations';
 
 export default function Filters() {
-  const { selectedCuisine, setSelectedCuisine } = useRestaurantStore();
+  const { selectedCuisine, setSelectedCuisine } = useLocationStore();
 
   return (
     <div className="mb-8">
       <h2 className="text-lg font-semibold mb-4">Filters</h2>
       <div className="flex flex-wrap gap-2">
-        {Object.values(CuisineType).map((cuisine) => (
+        {Object.values(Cuisine).map((cuisine) => (
           <button
             key={cuisine}
             onClick={() => setSelectedCuisine(cuisine === selectedCuisine ? null : cuisine)}
