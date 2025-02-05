@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useRestaurantStore } from '@/lib/store'
-import { CuisineType } from '@/lib/types'
+import { useRestaurantStore } from '@/lib/store';
+import { CuisineType } from '@/lib/types';
 
 export default function Filters() {
-  const { selectedCuisine, setSelectedCuisine } = useRestaurantStore()
+  const { selectedCuisine, setSelectedCuisine } = useRestaurantStore();
 
   return (
     <div className="mb-8">
@@ -15,9 +15,10 @@ export default function Filters() {
             key={cuisine}
             onClick={() => setSelectedCuisine(cuisine === selectedCuisine ? null : cuisine)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${cuisine === selectedCuisine
-                ? 'bg-orange-600 text-white'
-                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+              ${
+                cuisine === selectedCuisine
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
               }`}
           >
             {cuisine}
@@ -25,5 +26,5 @@ export default function Filters() {
         ))}
       </div>
     </div>
-  )
-} 
+  );
+}

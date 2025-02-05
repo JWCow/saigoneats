@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { useLocationStore } from '@/lib/store'
-import { LocationType, Cuisine, District } from '@/data/locations'
+import React from 'react';
+import { useLocationStore } from '@/lib/store';
+import { LocationType, Cuisine, District } from '@/data/locations';
 
 export default function FilterSidebar() {
   const {
@@ -14,17 +14,14 @@ export default function FilterSidebar() {
     setSelectedCuisine,
     setSelectedDistrict,
     setPriceRange,
-    resetFilters
-  } = useLocationStore()
+    resetFilters,
+  } = useLocationStore();
 
   return (
     <div className="w-64 bg-white p-4 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold">Filters</h2>
-        <button
-          onClick={resetFilters}
-          className="text-sm text-orange-600 hover:text-orange-700"
-        >
+        <button onClick={resetFilters} className="text-sm text-orange-600 hover:text-orange-700">
           Reset
         </button>
       </div>
@@ -74,7 +71,9 @@ export default function FilterSidebar() {
               <input
                 type="radio"
                 checked={selectedDistrict === district}
-                onChange={() => setSelectedDistrict(selectedDistrict === district ? null : district)}
+                onChange={() =>
+                  setSelectedDistrict(selectedDistrict === district ? null : district)
+                }
                 className="form-radio text-orange-600"
               />
               <span className="ml-2 text-sm">{district}</span>
@@ -103,5 +102,5 @@ export default function FilterSidebar() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

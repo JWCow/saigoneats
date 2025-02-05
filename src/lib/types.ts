@@ -5,7 +5,7 @@ export enum CuisineType {
   Vietnamese = 'vietnamese',
   Mexican = 'mexican',
   Chinese = 'chinese',
-  Dessert = 'dessert'
+  Dessert = 'dessert',
 }
 
 export interface Restaurant {
@@ -28,4 +28,4 @@ export interface Restaurant {
   };
   priceRange?: 'low' | 'medium' | 'high';
   features?: string[];
-} 
+}

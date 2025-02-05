@@ -26,22 +26,26 @@ A modern restaurant directory for Ho Chi Minh City, built with Next.js, TypeScri
 ## Getting Started 🚀
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/JWCow/saigoneats.git
    cd saigoneats
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create a `.env.local` file:
+
    ```bash
    cp .env.example .env.local
    ```
 
 4. Run the development server:
+
    ```bash
    npm run dev
    ```
@@ -57,4 +61,4 @@ A modern restaurant directory for Ho Chi Minh City, built with Next.js, TypeScri
 - `npm run format` - Format code with Prettier
 - `npm run type-check` - Run TypeScript compiler check
 
-## Project Structure 📁 
+## Project Structure 📁

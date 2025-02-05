@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Location } from '@/data/locations'
-import Link from 'next/link'
+import React from 'react';
+import { Location } from '@/data/locations';
+import Link from 'next/link';
 
 interface LocationDetailsProps {
-  location: Location
+  location: Location;
 }
 
 export default function LocationDetails({ location }: LocationDetailsProps) {
@@ -21,9 +21,7 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
           </Link>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          {location.name}
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">{location.name}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -32,21 +30,17 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Address</h3>
                 <p className="mt-1">{location.address.street}</p>
-                <p>{location.address.district}, {location.address.city}</p>
-                {location.address.postalCode && (
-                  <p>{location.address.postalCode}</p>
-                )}
+                <p>
+                  {location.address.district}, {location.address.city}
+                </p>
+                {location.address.postalCode && <p>{location.address.postalCode}</p>}
               </div>
 
               {location.contact && (
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Contact</h3>
-                  {location.contact.phone && (
-                    <p className="mt-1">📞 {location.contact.phone}</p>
-                  )}
-                  {location.contact.email && (
-                    <p className="mt-1">✉️ {location.contact.email}</p>
-                  )}
+                  {location.contact.phone && <p className="mt-1">📞 {location.contact.phone}</p>}
+                  {location.contact.email && <p className="mt-1">✉️ {location.contact.email}</p>}
                 </div>
               )}
 
@@ -65,8 +59,11 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Price Range</h3>
                 <p className="mt-1">
-                  {location.priceRange === 'low' ? '$' : 
-                   location.priceRange === 'medium' ? '$$' : '$$$'}
+                  {location.priceRange === 'low'
+                    ? '$'
+                    : location.priceRange === 'medium'
+                      ? '$$'
+                      : '$$$'}
                 </p>
               </div>
             </div>
@@ -75,7 +72,7 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Features</h2>
             <div className="flex flex-wrap gap-2">
-              {location.features.map(feature => (
+              {location.features.map((feature) => (
                 <span
                   key={feature}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800"
@@ -108,5 +105,5 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

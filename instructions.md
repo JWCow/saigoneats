@@ -1,11 +1,15 @@
 # Restaurant Directory Website PRD
+
 Version 1.0 | Date: February 5, 2025
 
 ## 1. Product Overview
+
 ### 1.1 Purpose
+
 A modern, static website that serves as a curated directory of restaurants and services in Ho Chi Minh City, providing users with an elegant interface to discover dining options across different cuisines.
 
 ### 1.2 Target Audience
+
 - Expatriates living in Ho Chi Minh City
 - Tourists visiting the city
 - Local residents looking for international cuisine
@@ -14,6 +18,7 @@ A modern, static website that serves as a curated directory of restaurants and s
 ## 2. Technical Architecture
 
 ### 2.1 Technology Stack
+
 - **Frontend Framework**: Next.js 14+ with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -24,6 +29,7 @@ A modern, static website that serves as a curated directory of restaurants and s
 - **Components**: shadcn/ui
 
 ### 2.2 Project Structure
+
 ```
 ├── src/
 │   ├── app/
@@ -46,13 +52,16 @@ A modern, static website that serves as a curated directory of restaurants and s
 ## 3. Feature Requirements
 
 ### 3.1 Core Features
+
 1. **Navigation**
+
    - Sticky header with logo
    - Dropdown menu for cuisine categories
    - Mobile-responsive hamburger menu
    - Search functionality with filters
 
 2. **Restaurant Listings**
+
    - Grid/List view toggle
    - Filtering by:
      - Cuisine type
@@ -64,6 +73,7 @@ A modern, static website that serves as a curated directory of restaurants and s
      - Rating (if implemented)
 
 3. **Restaurant Cards**
+
    - Restaurant name
    - Cuisine type
    - Address
@@ -80,12 +90,14 @@ A modern, static website that serves as a curated directory of restaurants and s
 ### 3.2 User Interface
 
 1. **Homepage**
+
    - Hero section with search bar
    - Featured cuisine categories
    - Popular restaurants section
    - Quick filters
 
 2. **Category Pages**
+
    - Category header with description
    - Filtered restaurant list
    - Category-specific filters
@@ -129,7 +141,7 @@ enum CuisineType {
   Vietnamese = 'vietnamese',
   Mexican = 'mexican',
   Chinese = 'chinese',
-  Dessert = 'dessert'
+  Dessert = 'dessert',
 }
 ```
 
@@ -147,24 +159,28 @@ enum CuisineType {
 ## 6. Development Phases
 
 ### Phase 1: Foundation
+
 - Project setup with Next.js and TypeScript
 - Basic routing implementation
 - Data structure definition
 - Basic component library setup
 
 ### Phase 2: Core Features
+
 - Restaurant listing implementation
 - Search functionality
 - Basic filtering system
 - Responsive layout
 
 ### Phase 3: Enhancement
+
 - Advanced filters
 - Animation and transitions
 - Performance optimization
 - SEO implementation
 
 ### Phase 4: Testing & Deployment
+
 - Unit testing
 - Integration testing
 - Performance testing
@@ -183,11 +199,13 @@ enum CuisineType {
 ## 8. Deployment Strategy
 
 1. **Version Control**
+
    - Main branch protection
    - PR review requirement
    - Automated testing on PR
 
 2. **CI/CD Pipeline**
+
    - GitHub Actions for:
      - Linting
      - Type checking

@@ -32,23 +32,15 @@ export default function Header() {
           </nav>
 
           {/* Mobile menu button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <span className="sr-only">Open main menu</span>
             {/* Hamburger icon */}
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+                d={isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
               />
             </svg>
           </button>
@@ -70,16 +62,10 @@ export default function Header() {
               >
                 Vietnamese
               </Link>
-              <Link
-                href="/pizza"
-                className="block px-3 py-2 text-gray-600 hover:text-orange-600"
-              >
+              <Link href="/pizza" className="block px-3 py-2 text-gray-600 hover:text-orange-600">
                 Pizza
               </Link>
-              <Link
-                href="/chinese"
-                className="block px-3 py-2 text-gray-600 hover:text-orange-600"
-              >
+              <Link href="/chinese" className="block px-3 py-2 text-gray-600 hover:text-orange-600">
                 Chinese
               </Link>
             </div>
@@ -88,4 +74,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

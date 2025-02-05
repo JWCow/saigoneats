@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import React, { useState, FormEvent, ChangeEvent } from 'react'
-import { useLocationStore } from '@/lib/store'
-import { useRouter } from 'next/navigation'
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+import { useLocationStore } from '@/lib/store';
+import { useRouter } from 'next/navigation';
 
 export default function SearchBar() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const setSearchTerm = useLocationStore(state => state.setSearchTerm)
-  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState('');
+  const setSearchTerm = useLocationStore((state) => state.setSearchTerm);
+  const router = useRouter();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setSearchTerm(searchQuery)
-    router.push('/locations')
-  }
+    e.preventDefault();
+    setSearchTerm(searchQuery);
+    router.push('/locations');
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-  }
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto">
@@ -37,5 +37,5 @@ export default function SearchBar() {
         </button>
       </div>
     </form>
-  )
-} 
+  );
+}

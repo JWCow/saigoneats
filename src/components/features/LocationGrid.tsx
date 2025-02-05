@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { useLocationStore } from '@/lib/store'
-import { Location } from '@/data/locations'
-import Link from 'next/link'
+import React from 'react';
+import { useLocationStore } from '@/lib/store';
+import { Location } from '@/data/locations';
+import Link from 'next/link';
 
 interface LocationCardProps {
-  location: Location
+  location: Location;
 }
 
 function LocationCard({ location }: LocationCardProps) {
@@ -14,12 +14,12 @@ function LocationCard({ location }: LocationCardProps) {
     <Link href={`/location/${location.id}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <div className="p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            {location.name}
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">{location.name}</h3>
           <div className="text-sm text-gray-500 mb-4">
             <p>{location.address.street}</p>
-            <p>{location.address.district}, {location.address.city}</p>
+            <p>
+              {location.address.district}, {location.address.city}
+            </p>
           </div>
           <div className="flex flex-wrap gap-2 mb-4">
             {location.features.map((feature) => (
@@ -36,18 +36,21 @@ function LocationCard({ location }: LocationCardProps) {
               {location.type}
             </span>
             <span className="text-sm text-gray-500">
-              {location.priceRange === 'low' ? '$' : 
-               location.priceRange === 'medium' ? '$$' : '$$$'}
+              {location.priceRange === 'low'
+                ? '$'
+                : location.priceRange === 'medium'
+                  ? '$$'
+                  : '$$$'}
             </span>
           </div>
         </div>
       </div>
     </Link>
-  )
+  );
 }
 
 export default function LocationGrid() {
-  const { filteredLocations } = useLocationStore()
+  const { filteredLocations } = useLocationStore();
 
   if (filteredLocations.length === 0) {
     return (
@@ -55,7 +58,7 @@ export default function LocationGrid() {
         <h3 className="text-lg font-medium text-gray-900">No locations found</h3>
         <p className="mt-2 text-sm text-gray-500">Try adjusting your filters</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -64,5 +67,5 @@ export default function LocationGrid() {
         <LocationCard key={location.id} location={location} />
       ))}
     </div>
-  )
-} 
+  );
+}

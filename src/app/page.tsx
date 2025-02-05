@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import React from 'react'
-import Link from 'next/link'
-import { useLocationStore } from '@/lib/store'
-import { useEffect } from 'react'
-import { locations, Cuisine, LocationType } from '@/data/locations'
-import SearchBar from '@/components/features/SearchBar'
+import React from 'react';
+import Link from 'next/link';
+import { useLocationStore } from '@/lib/store';
+import { useEffect } from 'react';
+import { locations, Cuisine, LocationType } from '@/data/locations';
+import SearchBar from '@/components/features/SearchBar';
 
 export default function Home() {
-  const setLocations = useLocationStore(state => state.setLocations)
+  const setLocations = useLocationStore((state) => state.setLocations);
 
   useEffect(() => {
-    setLocations(locations)
-  }, [setLocations])
+    setLocations(locations);
+  }, [setLocations]);
 
-  const featuredLocations = locations.slice(0, 6)
+  const featuredLocations = locations.slice(0, 6);
 
   return (
     <main>
@@ -40,24 +40,27 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-gray-900 mb-8">Featured Locations</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredLocations.map(location => (
+          {featuredLocations.map((location) => (
             <Link key={location.id} href={`/location/${location.id}`}>
               <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {location.name}
-                  </h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{location.name}</h3>
                   <div className="text-sm text-gray-500 mb-4">
                     <p>{location.address.street}</p>
-                    <p>{location.address.district}, {location.address.city}</p>
+                    <p>
+                      {location.address.district}, {location.address.city}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                       {location.type}
                     </span>
                     <span className="text-sm text-gray-500">
-                      {location.priceRange === 'low' ? '$' : 
-                       location.priceRange === 'medium' ? '$$' : '$$$'}
+                      {location.priceRange === 'low'
+                        ? '$'
+                        : location.priceRange === 'medium'
+                          ? '$$'
+                          : '$$$'}
                     </span>
                   </div>
                 </div>
@@ -80,7 +83,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Browse by Type</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {Object.values(LocationType).map(type => (
+            {Object.values(LocationType).map((type) => (
               <Link
                 key={type}
                 href={`/locations?type=${type}`}
@@ -102,7 +105,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Browse by Cuisine</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Object.values(Cuisine).map(cuisine => (
+            {Object.values(Cuisine).map((cuisine) => (
               <Link
                 key={cuisine}
                 href={`/locations?cuisine=${cuisine}`}
@@ -121,5 +124,5 @@ export default function Home() {
         </div>
       </section>
     </main>
-  )
-} 
+  );
+}
