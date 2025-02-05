@@ -11,6 +11,7 @@ export default function LocationsPage() {
   const setLocations = useLocationStore((state) => state.setLocations);
 
   useEffect(() => {
+    console.log('All locations:', locations);
     setLocations(locations);
   }, [setLocations]);
 

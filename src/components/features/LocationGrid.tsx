@@ -82,6 +82,8 @@ function LocationCard({ location }: LocationCardProps) {
 
 export default function LocationGrid() {
   const { filteredLocations } = useLocationStore();
+  
+  console.log('Filtered locations:', filteredLocations);
 
   if (filteredLocations.length === 0) {
     return (
