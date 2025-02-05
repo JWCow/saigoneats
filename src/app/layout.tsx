@@ -26,12 +26,14 @@ export const metadata: Metadata = {
       'Explore the finest restaurants, cafes, and bars in Saigon. From traditional Vietnamese cuisine to international flavors, find the perfect dining spot in Ho Chi Minh City.',
     url: 'https://saigoneats.vercel.app',
     siteName: 'SaigonEats',
-    images: [{
-      url: 'https://saigoneats.vercel.app/metasitecard.png',
-      width: 1200,
-      height: 630,
-      alt: 'SaigonEats - Food Guide to Ho Chi Minh City',
-    }],
+    images: [
+      {
+        url: 'https://saigoneats.vercel.app/metasitecard.png',
+        width: 1200,
+        height: 630,
+        alt: 'SaigonEats - Food Guide to Ho Chi Minh City',
+      },
+    ],
     locale: 'en_US',
     type: 'website',
   },
