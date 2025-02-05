@@ -98,6 +98,17 @@ export default function LocationDetailPage() {
                   </a>
                 </div>
               )}
+
+              <div className="mt-8">
+                <a
+                  href={location.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  View on Google Maps
+                </a>
+              </div>
             </div>
           </div>
         </div>
