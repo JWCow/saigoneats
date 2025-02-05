@@ -32,17 +32,19 @@ export enum District {
 }
 /* eslint-enable no-unused-vars */
 
+export interface Address {
+  street: string;
+  district: District;
+  city: string;
+  postalCode?: string;
+}
+
 export interface Location {
   id: string;
   name: string;
   type: LocationType;
   cuisine?: Cuisine;
-  address: {
-    street: string;
-    district: District;
-    city: string;
-    postalCode?: string;
-  };
+  address: Address;
   coordinates?: {
     lat: number;
     lng: number;

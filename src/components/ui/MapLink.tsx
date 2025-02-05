@@ -24,4 +24,4 @@ export default function MapLink({ location, className = '' }: MapLinkProps) {
       <span className="text-sm group-hover:underline">View on Map</span>
     </a>
   );
-} 
+}
