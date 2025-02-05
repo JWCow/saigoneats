@@ -48,11 +48,7 @@ export default function CuisinePage() {
                     {location.type}
                   </span>
                   <span className="text-sm text-gray-500">
-                    {location.priceRange === 'low'
-                      ? '$'
-                      : location.priceRange === 'medium'
-                      ? '$$'
-                      : '$$$'}
+                    {location.priceRange === 'low' ? '$' : location.priceRange === 'medium' ? '$$' : '$$$'}
                   </span>
                 </div>
               </div>
