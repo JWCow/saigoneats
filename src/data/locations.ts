@@ -670,7 +670,8 @@ export const locations: Location[] = [
       district: District.D7,
       city: 'Ho Chi Minh City',
     },
-    googleMapsUrl: 'https://maps.google.com/?q=SIGNATURE+By+The+Coffee+House+Crescent+Mall+Ho+Chi+Minh+City',
+    googleMapsUrl:
+      'https://maps.google.com/?q=SIGNATURE+By+The+Coffee+House+Crescent+Mall+Ho+Chi+Minh+City',
     features: ['Premium Coffee', 'Mall Location', 'Modern'],
     priceRange: 'medium',
   },
