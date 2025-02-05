@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 export default function CuisinePage() {
   const params = useParams();
-  const { locations, setSelectedCuisine, filteredLocations } = useLocationStore();
+  const { setSelectedCuisine, filteredLocations } = useLocationStore();
 
   useEffect(() => {
     if (params.cuisine && Object.values(Cuisine).includes(params.cuisine as Cuisine)) {
@@ -20,7 +20,9 @@ export default function CuisinePage() {
   if (filteredLocations.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 capitalize mb-8">{params.cuisine} Cuisine</h1>
+        <h1 className="text-3xl font-bold text-gray-900 capitalize mb-8">
+          {params.cuisine} Cuisine
+        </h1>
         <p className="text-gray-600">No locations found for this cuisine type.</p>
       </div>
     );
