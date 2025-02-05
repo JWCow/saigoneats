@@ -72,8 +72,8 @@ export interface Location {
 
 export const locations: Location[] = [
   {
-    id: 'pizza-4ps',
-    name: "Pizza 4P's",
+    id: 'pizza-4ps-vivo',
+    name: "Pizza 4P's - Vivo City",
     type: LocationType.Restaurant,
     cuisine: Cuisine.Pizza,
     address: {
@@ -86,6 +86,63 @@ export const locations: Location[] = [
     features: ['Dine-in', 'Takeaway', 'Delivery'],
     priceRange: 'high',
     description: 'Famous for their unique Japanese-Italian fusion pizzas',
+  },
+  {
+    id: 'pizza-4ps-thu-khoa-huan',
+    name: "Pizza 4P's - Thu Khoa Huan",
+    type: LocationType.Restaurant,
+    cuisine: Cuisine.Pizza,
+    address: {
+      street: '8 Thu Khoa Huan Street',
+      district: District.D1,
+      city: 'Ho Chi Minh City',
+      postalCode: '700000',
+    },
+    googleMapsUrl: 'https://maps.google.com/?q=Pizza+4Ps+Thu+Khoa+Huan',
+    features: ['Dine-in', 'Takeaway', 'Delivery'],
+    priceRange: 'high',
+    contact: {
+      phone: '+84 28 3622 0500',
+    },
+    description: 'Famous for their unique Japanese-Italian fusion pizzas - District 1 branch',
+  },
+  {
+    id: 'pho-hoa',
+    name: 'Pho Hoa',
+    type: LocationType.Restaurant,
+    cuisine: Cuisine.Vietnamese,
+    address: {
+      street: '260C Pasteur Street',
+      district: District.D3,
+      city: 'Ho Chi Minh City',
+      postalCode: '700000',
+    },
+    googleMapsUrl: 'https://maps.google.com/?q=Pho+Hoa+Pasteur+Ho+Chi+Minh+City',
+    features: ['Pho', 'Vietnamese', 'Breakfast', 'Dine-in', 'Takeaway'],
+    priceRange: 'low',
+    contact: {
+      phone: '+84 28 3829 7943',
+    },
+    description: 'Traditional Vietnamese pho restaurant',
+  },
+  {
+    id: 'el-gaucho',
+    name: 'El Gaucho',
+    type: LocationType.Restaurant,
+    cuisine: Cuisine.American,
+    address: {
+      street: '74/1 Hai Ba Trung',
+      district: District.D1,
+      city: 'Ho Chi Minh City',
+      postalCode: '700000',
+    },
+    googleMapsUrl: 'https://maps.google.com/?q=El+Gaucho+Hai+Ba+Trung+Ho+Chi+Minh+City',
+    features: ['Steakhouse', 'Fine Dining', 'Wine', 'Dine-in', 'Reservation'],
+    priceRange: 'high',
+    contact: {
+      phone: '+84 28 3823 2227',
+    },
+    description: 'Premium steakhouse offering high-quality cuts and fine dining experience',
   },
   {
     id: 'paper-plate-pizza',
