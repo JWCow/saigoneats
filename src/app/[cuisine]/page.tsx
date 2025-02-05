@@ -33,25 +33,29 @@ export default function CuisinePage() {
       <h1 className="text-3xl font-bold text-gray-900 capitalize mb-8">{params.cuisine} Cuisine</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredLocations.map((location) => (
-          <Link key={location.id} href={`/location/${location.id}`}>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{location.name}</h3>
-                <div className="text-sm text-gray-500 mb-4">
-                  <p>{location.address.street}</p>
-                  <p>
-                    {location.address.district}, {location.address.city}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                    {location.type}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {location.priceRange === 'low' ? '$' : location.priceRange === 'medium' ? '$$' : '$$$'}
-                  </span>
-                </div>
-              </div>
+          <Link
+            href={`/location/${location.id}`}
+            key={location.id}
+            className="block p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {location.name}
+              </h3>
+              <span className="text-sm text-gray-500">
+                {location.priceRange === 'low' ? '$' : location.priceRange === 'medium' ? '$$' : '$$$'}
+              </span>
+            </div>
+            <div className="text-sm text-gray-500 mb-4">
+              <p>{location.address.street}</p>
+              <p>
+                {location.address.district}, {location.address.city}
+              </p>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                {location.type}
+              </span>
             </div>
           </Link>
         ))}
