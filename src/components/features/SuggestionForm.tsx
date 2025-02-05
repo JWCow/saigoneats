@@ -4,14 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { LocationType, Cuisine } from '@/data/locations';
 import { db } from '@/lib/firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import usePlacesAutocomplete, {
-  getGeocode,
-  getDetails,
-} from 'use-places-autocomplete';
-import { useLoadScript, Libraries } from '@react-google-maps/api';
+import usePlacesAutocomplete, { getGeocode, getDetails } from 'use-places-autocomplete';
 import Toast from '@/components/ui/Toast';
-
-const libraries: Libraries = ['places'];
 
 interface SuggestionFormProps {
   isOpen: boolean;
@@ -19,10 +13,18 @@ interface SuggestionFormProps {
 }
 
 export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps) {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
-    libraries,
-  });
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+
+  useEffect(() => {
+    // Check if Google Maps script is loaded
+    if (window.google && window.google.maps) {
+      setScriptLoaded(true);
+      console.log('Google Maps script loaded successfully');
+      console.log('API Key:', process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.slice(0, 8) + '...');
+    } else {
+      console.error('Google Maps script not loaded');
+    }
+  }, []);
 
   const {
     ready,
@@ -36,19 +38,18 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       types: ['establishment'],
     },
     debounce: 300,
-    defaultValue: "",
+    defaultValue: '',
   });
 
   // Debug logs for Places Autocomplete
   useEffect(() => {
-    console.log('Google Maps Script Status:', { isLoaded, loadError });
     console.log('Autocomplete State:', {
       ready,
       value,
       status,
       suggestions: data.length,
     });
-  }, [isLoaded, loadError, ready, value, status, data]);
+  }, [ready, value, status, data]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -80,8 +81,8 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
     try {
       const results = await getGeocode({ placeId: suggestion.place_id });
       const { place_id } = results[0];
-      
-      const placeDetails = await getDetails({
+
+      const placeDetails = (await getDetails({
         placeId: place_id,
         fields: [
           'name',
@@ -93,19 +94,21 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           'place_id',
           'types',
           'rating',
-          'user_ratings_total'
+          'user_ratings_total',
         ],
-      }) as PlaceDetails;
-      
+      })) as PlaceDetails;
+
       console.log('Place details:', placeDetails);
-      
+
       // Create a simplified place object
       const simplifiedPlace: PlaceDetails = {
         name: placeDetails.name || suggestion.description,
         formatted_address: placeDetails.formatted_address || suggestion.description,
         formatted_phone_number: placeDetails.formatted_phone_number || '',
         website: placeDetails.website || '',
-        url: placeDetails.url || `https://www.google.com/maps/place/?q=place_id:${suggestion.place_id}`,
+        url:
+          placeDetails.url ||
+          `https://www.google.com/maps/place/?q=place_id:${suggestion.place_id}`,
         place_id: suggestion.place_id,
       };
 
@@ -127,7 +130,8 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       };
       setPlace(basicPlace);
       setToast({
-        message: 'Some location details could not be loaded, but you can still submit the suggestion.',
+        message:
+          'Some location details could not be loaded, but you can still submit the suggestion.',
         type: 'error',
       });
     }
@@ -177,7 +181,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
       // Get a reference to the suggestions collection
       const suggestionRef = collection(db, 'suggestions');
-      
+
       // Add the document
       const docRef = await addDoc(suggestionRef, suggestionData);
       console.log('Suggestion submitted with ID:', docRef.id);
@@ -193,12 +197,11 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       setCategory('');
       setCuisine('');
       setComments('');
-      
+
       // Close the modal after a short delay
       setTimeout(() => {
         onClose();
       }, 2000);
-
     } catch (error) {
       console.error('Error submitting suggestion:', error);
       setToast({
@@ -211,28 +214,29 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
   };
 
   if (!isOpen) return null;
-  if (!isLoaded) return <div>Loading...</div>;
 
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-lg max-w-2xl w-full p-6">
           <h2 className="text-2xl font-bold mb-4">Suggest a Location</h2>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+              <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                Location
+              </label>
               <input
                 id="location"
                 type="text"
                 value={value}
                 onChange={handleInputChange}
                 disabled={!ready}
-                placeholder={ready ? "Search for a place..." : "Loading..."}
+                placeholder={ready ? 'Search for a place...' : 'Loading...'}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
                 autoComplete="off"
               />
-              {status === "OK" && value && (
+              {status === 'OK' && value && (
                 <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                   {data.map((suggestion) => (
                     <li
@@ -248,7 +252,9 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
             </div>
 
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                Category
+              </label>
               <select
                 id="category"
                 value={category}
@@ -266,7 +272,9 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
             </div>
 
             <div>
-              <label htmlFor="cuisine" className="block text-sm font-medium text-gray-700">Cuisine</label>
+              <label htmlFor="cuisine" className="block text-sm font-medium text-gray-700">
+                Cuisine
+              </label>
               <select
                 id="cuisine"
                 value={cuisine}
@@ -283,7 +291,9 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
             </div>
 
             <div>
-              <label htmlFor="comments" className="block text-sm font-medium text-gray-700">Comments</label>
+              <label htmlFor="comments" className="block text-sm font-medium text-gray-700">
+                Comments
+              </label>
               <textarea
                 id="comments"
                 value={comments}
@@ -313,13 +323,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           </form>
         </div>
       </div>
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </>
   );
-} 
+}
