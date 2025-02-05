@@ -4,8 +4,13 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
-import { Cuisine } from '@/data/locations';
+import { Cuisine, Location } from '@/data/locations';
 import Link from 'next/link';
+
+const PriceRange = ({ priceRange }: { priceRange: Location['priceRange'] }) => {
+  const priceSymbol = priceRange === 'low' ? '$' : priceRange === 'medium' ? '$$' : '$$$';
+  return <span className="text-sm text-gray-500">{priceSymbol}</span>;
+};
 
 export default function CuisinePage() {
   const params = useParams();
@@ -40,11 +45,11 @@ export default function CuisinePage() {
           >
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-semibold text-gray-900">{location.name}</h3>
-              <span className="text-sm text-gray-500">{location.priceRange === 'low' ? '$' : location.priceRange === 'medium' ? '$$' : '$$$'}</span>
+              <PriceRange priceRange={location.priceRange} />
             </div>
             <div className="text-sm text-gray-500 mb-4">
               <p>{location.address.street}</p>
-              <p>{location.address.district}, {location.address.city}</p>
+              <p>{`${location.address.district}, ${location.address.city}`}</p>
             </div>
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
