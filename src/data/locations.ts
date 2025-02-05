@@ -199,7 +199,8 @@ export const locations: Location[] = [
       district: District.D1,
       city: 'Ho Chi Minh City',
     },
-    googleMapsUrl: 'https://maps.google.com/?q=Bun+Thit+Nuong+Cha+Gio+Nguyen+Trung+Truc+Ho+Chi+Minh+City',
+    googleMapsUrl:
+      'https://maps.google.com/?q=Bun+Thit+Nuong+Cha+Gio+Nguyen+Trung+Truc+Ho+Chi+Minh+City',
     features: ['Vietnamese', 'Local Cuisine', 'Street Food'],
     priceRange: 'low',
   },
