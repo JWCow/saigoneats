@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { Location, LocationType, Cuisine, District } from '@/data/locations';
-import { StateCreator } from 'zustand';
 
 interface FilterState {
   locations: Location[];
@@ -13,12 +12,12 @@ interface FilterState {
   sortBy: 'name' | 'rating' | 'priceRange' | null;
 
   setLocations: (locations: Location[]) => void;
-  setSearchTerm: (term: string) => void;
-  setSelectedType: (type: LocationType | null) => void;
-  setSelectedCuisine: (cuisine: Cuisine | null) => void;
-  setSelectedDistrict: (district: District | null) => void;
-  setPriceRange: (range: 'low' | 'medium' | 'high' | null) => void;
-  setSortBy: (sort: 'name' | 'rating' | 'priceRange' | null) => void;
+  setSearchTerm: (searchTerm: string) => void;
+  setSelectedType: (selectedType: LocationType | null) => void;
+  setSelectedCuisine: (selectedCuisine: Cuisine | null) => void;
+  setSelectedDistrict: (selectedDistrict: District | null) => void;
+  setPriceRange: (priceRange: 'low' | 'medium' | 'high' | null) => void;
+  setSortBy: (sortBy: 'name' | 'rating' | 'priceRange' | null) => void;
   resetFilters: () => void;
   applyFilters: () => void;
 }
@@ -33,38 +32,38 @@ export const useLocationStore = create<FilterState>((set, get) => ({
   priceRange: null,
   sortBy: null,
 
-  setLocations: (locations: Location[]) => {
+  setLocations: (locations) => {
     set({ locations });
     get().applyFilters();
   },
 
-  setSearchTerm: (term: string) => {
-    set({ searchTerm: term });
+  setSearchTerm: (searchTerm) => {
+    set({ searchTerm });
     get().applyFilters();
   },
 
-  setSelectedType: (type: LocationType | null) => {
-    set({ selectedType: type });
+  setSelectedType: (selectedType) => {
+    set({ selectedType });
     get().applyFilters();
   },
 
-  setSelectedCuisine: (cuisine: Cuisine | null) => {
-    set({ selectedCuisine: cuisine });
+  setSelectedCuisine: (selectedCuisine) => {
+    set({ selectedCuisine });
     get().applyFilters();
   },
 
-  setSelectedDistrict: (district: District | null) => {
-    set({ selectedDistrict: district });
+  setSelectedDistrict: (selectedDistrict) => {
+    set({ selectedDistrict });
     get().applyFilters();
   },
 
-  setPriceRange: (range: 'low' | 'medium' | 'high' | null) => {
-    set({ priceRange: range });
+  setPriceRange: (priceRange) => {
+    set({ priceRange });
     get().applyFilters();
   },
 
-  setSortBy: (sort: 'name' | 'rating' | 'priceRange' | null) => {
-    set({ sortBy: sort });
+  setSortBy: (sortBy) => {
+    set({ sortBy });
     get().applyFilters();
   },
 
@@ -93,27 +92,22 @@ export const useLocationStore = create<FilterState>((set, get) => ({
 
     let filtered = [...locations];
 
-    // Apply type filter
     if (selectedType) {
       filtered = filtered.filter((location) => location.type === selectedType);
     }
 
-    // Apply cuisine filter
     if (selectedCuisine) {
       filtered = filtered.filter((location) => location.cuisine === selectedCuisine);
     }
 
-    // Apply district filter
     if (selectedDistrict) {
       filtered = filtered.filter((location) => location.address.district === selectedDistrict);
     }
 
-    // Apply price range filter
     if (priceRange) {
       filtered = filtered.filter((location) => location.priceRange === priceRange);
     }
 
-    // Apply search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -124,7 +118,6 @@ export const useLocationStore = create<FilterState>((set, get) => ({
       );
     }
 
-    // Apply sorting
     if (sortBy) {
       filtered.sort((a, b) => {
         switch (sortBy) {

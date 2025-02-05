@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export enum LocationType {
   Restaurant = 'restaurant',
   Cafe = 'cafe',
@@ -29,6 +30,7 @@ export enum District {
   BinhThanh = 'Binh Thanh',
   ThuDuc = 'Thu Duc',
 }
+/* eslint-enable no-unused-vars */
 
 export interface Location {
   id: string;
