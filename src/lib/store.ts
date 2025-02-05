@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Location, LocationType, Cuisine, District } from '@/data/locations';
 
+/* eslint-disable no-unused-vars */
 interface FilterState {
   locations: Location[];
   filteredLocations: Location[];
@@ -21,6 +22,7 @@ interface FilterState {
   resetFilters: () => void;
   applyFilters: () => void;
 }
+/* eslint-enable no-unused-vars */
 
 export const useLocationStore = create<FilterState>((set, get) => ({
   locations: [],
