@@ -4,6 +4,9 @@ import React from 'react';
 import { useLocationStore } from '@/lib/store';
 import { LocationType, Cuisine, District } from '@/data/locations';
 
+type PriceRange = 'low' | 'medium' | 'high';
+const priceRanges: PriceRange[] = ['low', 'medium', 'high'];
+
 export default function FilterSidebar() {
   const {
     selectedType,
@@ -86,7 +89,7 @@ export default function FilterSidebar() {
       <div className="mb-6">
         <h3 className="text-sm font-medium mb-3">Price Range</h3>
         <div className="space-y-2">
-          {['low', 'medium', 'high'].map((price) => (
+          {priceRanges.map((price) => (
             <label key={price} className="flex items-center">
               <input
                 type="radio"
