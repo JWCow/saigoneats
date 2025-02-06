@@ -27,19 +27,22 @@ export default function Home() {
   };
 
   // Get main cuisines (excluding unpopulated and utility categories)
-  const mainCuisines = Object.values(Cuisine).filter(
-    (cuisine) =>
-      ![
-        'cafe',
-        'bakery',
-        'dessert',
-        'international',
-        'fusion',
-        'seafood',
-        'bbq',
-        'street_food',
-      ].includes(cuisine)
-  );
+  const mainCuisines = Object.values(Cuisine)
+    .filter((cuisine) => !['seafood', 'bbq'].includes(cuisine.toLowerCase()))
+    .sort((a, b) => {
+      // Put Vietnamese first, then other Asian cuisines, then Western, then others
+      if (a.toLowerCase() === 'vietnamese') return -1;
+      if (b.toLowerCase() === 'vietnamese') return 1;
+
+      const asianCuisines = ['chinese', 'japanese', 'korean', 'thai'];
+      const isAAsian = asianCuisines.includes(a.toLowerCase());
+      const isBasian = asianCuisines.includes(b.toLowerCase());
+
+      if (isAAsian && !isBasian) return -1;
+      if (!isAAsian && isBasian) return 1;
+
+      return a.localeCompare(b);
+    });
 
   const container = {
     hidden: { opacity: 0 },
@@ -158,7 +161,11 @@ export default function Home() {
           >
             {mainCuisines.map((cuisine) => (
               <motion.div key={cuisine} variants={item}>
-                <Link href={`/locations?cuisine=${encodeURIComponent(cuisine)}`} className="block">
+                <Link
+                  href={`/locations?cuisine=${cuisine.toLowerCase()}`}
+                  className="block"
+                  scroll={false}
+                >
                   <Card className="group hover:shadow-md transition-all duration-200 border hover:border-orange-200 h-full">
                     <CardContent className="p-2.5 sm:p-4">
                       <div className="flex items-center gap-1.5 sm:gap-2">

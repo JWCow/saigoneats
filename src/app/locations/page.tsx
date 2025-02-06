@@ -13,9 +13,12 @@ export default function LocationsPage() {
   const setLocations = useLocationStore((state) => state.setLocations);
   const setSelectedDistrict = useLocationStore((state) => state.setSelectedDistrict);
   const setSelectedCuisine = useLocationStore((state) => state.setSelectedCuisine);
+  const resetFilters = useLocationStore((state) => state.resetFilters);
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    // Reset all filters first
+    resetFilters();
     setLocations(locations);
 
     // Get district from URL parameters and validate it
@@ -27,13 +30,27 @@ export default function LocationsPage() {
     // Get cuisine from URL parameters and validate it
     const cuisine = searchParams.get('cuisine');
     if (cuisine) {
-      // Normalize the cuisine case to match the enum
-      const normalizedCuisine = cuisine.charAt(0).toUpperCase() + cuisine.slice(1).toLowerCase();
-      if (Object.values(Cuisine).includes(normalizedCuisine as Cuisine)) {
-        setSelectedCuisine(normalizedCuisine as Cuisine);
+      // Convert the URL parameter to match the Cuisine enum format
+      const normalizedCuisine = cuisine
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join('');
+
+      // Find the matching cuisine in the enum
+      const matchingCuisine = Object.values(Cuisine).find(
+        (c) => c.toLowerCase() === cuisine.toLowerCase()
+      );
+
+      if (matchingCuisine) {
+        setSelectedCuisine(matchingCuisine);
       }
     }
-  }, [setLocations, setSelectedDistrict, setSelectedCuisine, searchParams]);
+
+    // Cleanup function to reset filters when unmounting
+    return () => {
+      resetFilters();
+    };
+  }, [setLocations, setSelectedDistrict, setSelectedCuisine, resetFilters, searchParams]);
 
   // Get the current filter values for the header text
   const district = searchParams.get('district');
