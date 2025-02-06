@@ -7,6 +7,7 @@ import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
 import { locations, District, Cuisine } from '@/data/locations';
 import { useSearchParams } from 'next/navigation';
+import UserSubmissions from '@/components/features/UserSubmissions';
 
 export default function LocationsPage() {
   const setLocations = useLocationStore((state) => state.setLocations);
@@ -25,8 +26,12 @@ export default function LocationsPage() {
 
     // Get cuisine from URL parameters and validate it
     const cuisine = searchParams.get('cuisine');
-    if (cuisine && Object.values(Cuisine).includes(cuisine as Cuisine)) {
-      setSelectedCuisine(cuisine as Cuisine);
+    if (cuisine) {
+      // Normalize the cuisine case to match the enum
+      const normalizedCuisine = cuisine.charAt(0).toUpperCase() + cuisine.slice(1).toLowerCase();
+      if (Object.values(Cuisine).includes(normalizedCuisine as Cuisine)) {
+        setSelectedCuisine(normalizedCuisine as Cuisine);
+      }
     }
   }, [setLocations, setSelectedDistrict, setSelectedCuisine, searchParams]);
 
@@ -59,6 +64,11 @@ export default function LocationsPage() {
             <p className="mt-2 text-sm text-gray-500">
               Discover great places to eat and drink in Ho Chi Minh City
             </p>
+          </div>
+
+          {/* Hidden UserSubmissions to load data */}
+          <div className="hidden">
+            <UserSubmissions />
           </div>
 
           {/* Content */}

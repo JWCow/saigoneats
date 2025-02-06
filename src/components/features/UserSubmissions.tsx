@@ -3,6 +3,7 @@ import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestor
 import { db } from '@/lib/firebase/config';
 import { MapPin, Phone, Globe } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useLocationStore } from '@/lib/store';
 
 interface Submission {
   id: string;
@@ -54,33 +55,23 @@ export default function UserSubmissions() {
   const [showLeftGradient, setShowLeftGradient] = useState(false);
   const [showRightGradient, setShowRightGradient] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const setUserSubmissions = useLocationStore((state) => state.setUserSubmissions);
 
   useEffect(() => {
     try {
-      const q = query(collection(db, 'suggestions'), orderBy('createdAt', 'desc'), limit(5));
+      const q = query(collection(db, 'suggestions'), orderBy('createdAt', 'desc'), limit(20));
 
       const unsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          try {
-            const newSubmissions = snapshot.docs
-              .map(
-                (doc) =>
-                  ({
-                    id: doc.id,
-                    ...doc.data(),
-                  }) as Submission
-              )
-              .filter((submission) => submission.status === 'approved');
+          const newSubmissions = snapshot.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() }) as Submission)
+            .filter((submission) => submission.status === 'approved');
 
-            setSubmissions(newSubmissions);
-            setLoading(false);
-            setError(null);
-          } catch (err) {
-            console.error('Error processing submissions:', err);
-            setError('Error processing submissions data');
-            setLoading(false);
-          }
+          setSubmissions(newSubmissions);
+          setUserSubmissions(newSubmissions);
+          setLoading(false);
+          setError(null);
         },
         (err) => {
           console.error('Error fetching submissions:', err);
@@ -95,7 +86,7 @@ export default function UserSubmissions() {
       setError('Error setting up submissions listener');
       setLoading(false);
     }
-  }, []);
+  }, [setUserSubmissions]);
 
   // Add scroll handler
   const handleScroll = () => {

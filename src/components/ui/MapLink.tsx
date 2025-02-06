@@ -1,27 +1,23 @@
 'use client';
 
 import { Location } from '@/data/locations';
-import { generateMapsUrl } from '@/lib/utils/maps';
-import { MapPinIcon } from '@heroicons/react/24/outline';
+import { MapPin } from 'lucide-react';
 
 interface MapLinkProps {
   location: Location;
-  className?: string;
 }
 
-export default function MapLink({ location, className = '' }: MapLinkProps) {
-  const mapUrl = generateMapsUrl(location.address);
-
+export default function MapLink({ location }: MapLinkProps) {
   return (
     <a
-      href={mapUrl}
+      href={location.googleMapsUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center gap-1 text-gray-600 hover:text-orange-600 transition-colors group ${className}`}
-      aria-label={`Open ${location.name} in Google Maps`}
+      className="inline-flex items-center space-x-1 text-sm text-orange-600 hover:text-orange-700"
+      onClick={(e) => e.stopPropagation()}
     >
-      <MapPinIcon className="w-4 h-4" />
-      <span className="text-sm group-hover:underline">View on Map</span>
+      <MapPin className="h-4 w-4" />
+      <span>View on Maps</span>
     </a>
   );
 }
