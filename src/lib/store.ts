@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { create } from 'zustand';
 import { Location, LocationType, Cuisine, District } from '@/data/locations';
 

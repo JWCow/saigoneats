@@ -414,7 +414,7 @@ export const locations: Location[] = [
     priceRange: 'medium',
     website: {
       url: 'https://www.facebook.com/HoHoMei.DiemTam.MiGia',
-      label: 'Visit Facebook Page'
+      label: 'Visit Facebook Page',
     },
     contact: {
       phone: '+84 28 3981 8181',
@@ -507,7 +507,7 @@ export const locations: Location[] = [
     priceRange: 'high',
     website: {
       url: 'https://www.facebook.com/blankloungelandmark81',
-      label: 'Visit Facebook Page'
+      label: 'Visit Facebook Page',
     },
     contact: {
       phone: '+84 28 3827 2727',
@@ -618,7 +618,7 @@ export const locations: Location[] = [
     priceRange: 'high',
     website: {
       url: 'https://www.facebook.com/lusinespace',
-      label: 'Visit Facebook Page'
+      label: 'Visit Facebook Page',
     },
     contact: {
       phone: '+84 28 6674 3565',
@@ -656,7 +656,7 @@ export const locations: Location[] = [
     priceRange: 'high',
     website: {
       url: 'https://www.facebook.com/43factory',
-      label: 'Visit Facebook Page'
+      label: 'Visit Facebook Page',
     },
     contact: {
       phone: '+84 90 671 4343',
@@ -757,7 +757,7 @@ export const locations: Location[] = [
     priceRange: 'medium',
     website: {
       url: 'https://www.facebook.com/profile.php?id=100063674682435',
-      label: 'Visit Facebook Page'
+      label: 'Visit Facebook Page',
     },
     contact: {
       phone: '+84 90 909 1135',

@@ -3,8 +3,7 @@
 import React from 'react';
 import { useLocationStore } from '@/lib/store';
 import { Location } from '@/data/locations';
-import Link from 'next/link';
-import { MapPin, ExternalLink, DollarSign, Phone, Globe, Clock } from 'lucide-react';
+import { MapPin, DollarSign, Phone, Globe, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface LocationCardProps {
@@ -63,9 +62,7 @@ function LocationCard({ location }: LocationCardProps) {
       <div className="space-y-4">
         {/* Header with name and date */}
         <div className="flex justify-between items-start">
-          <h3 className="text-xl font-semibold text-gray-900">
-            {location.name}
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-900">{location.name}</h3>
           {location.submittedAt && (
             <span className="text-sm text-orange-600 font-medium">
               {formatDistanceToNow(location.submittedAt, { addSuffix: true })}
@@ -125,21 +122,20 @@ function LocationCard({ location }: LocationCardProps) {
               {location.cuisine}
             </span>
           )}
-          {location.features && location.features.map((feature) => (
-            <span
-              key={feature}
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTagStyle(feature)}`}
-            >
-              {feature}
-            </span>
-          ))}
+          {location.features &&
+            location.features.map((feature) => (
+              <span
+                key={feature}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTagStyle(feature)}`}
+              >
+                {feature}
+              </span>
+            ))}
         </div>
 
         {/* Description */}
         {location.description && (
-          <div className="text-gray-600 italic">
-            &ldquo;{location.description}&rdquo;
-          </div>
+          <div className="text-gray-600 italic">&ldquo;{location.description}&rdquo;</div>
         )}
 
         {/* Opening Hours */}

@@ -191,7 +191,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         message: 'Location details loaded successfully',
         type: 'success',
       });
-    } catch (error) {
+    } catch (_error) {
       // Create a basic place object from the suggestion if details fetch fails
       const basicPlace: PlaceDetails = {
         name: suggestion.description,
@@ -290,13 +290,12 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       setTimeout(() => {
         onClose();
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
+      setLoading(false);
       setToast({
         message: 'Error submitting suggestion. Please try again.',
         type: 'error',
       });
-    } finally {
-      setLoading(false);
     }
   };
 

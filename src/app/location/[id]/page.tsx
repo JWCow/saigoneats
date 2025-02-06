@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Location } from '@/data/locations';
 import { locations } from '@/data/locations';
 import LocationDetails from '@/components/features/LocationDetails';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 interface LocationPageProps {
