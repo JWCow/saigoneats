@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocationStore } from '@/lib/store';
 import { LocationType, Cuisine, District } from '@/data/locations';
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type PriceRange = 'low' | 'medium' | 'high';
 const priceRanges: PriceRange[] = ['low', 'medium', 'high'];
@@ -12,6 +13,8 @@ const priceRanges: PriceRange[] = ['low', 'medium', 'high'];
 type FilterSection = 'type' | 'cuisine' | 'district' | 'price';
 
 export default function FilterSidebar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     selectedType,
     selectedCuisine,
@@ -27,10 +30,47 @@ export default function FilterSidebar() {
   const [expandedSections, setExpandedSections] = useState<FilterSection[]>(['district']);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedDistrict) {
+      params.set('district', selectedDistrict);
+    } else {
+      params.delete('district');
+    }
+
+    if (selectedType) {
+      params.set('type', selectedType);
+    } else {
+      params.delete('type');
+    }
+
+    if (selectedCuisine) {
+      params.set('cuisine', selectedCuisine);
+    } else {
+      params.delete('cuisine');
+    }
+
+    if (priceRange) {
+      params.set('price', priceRange);
+    } else {
+      params.delete('price');
+    }
+
+    const queryString = params.toString();
+    router.push(`/locations${queryString ? `?${queryString}` : ''}`);
+  }, [selectedDistrict, selectedType, selectedCuisine, priceRange, router, searchParams]);
+
   const toggleSection = (section: FilterSection) => {
     setExpandedSections((prev) =>
       prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section]
     );
+  };
+
+  const handleReset = () => {
+    resetFilters();
+    router.push('/locations');
   };
 
   const FilterHeader = ({ title, section }: { title: string; section: FilterSection }) => {
@@ -57,7 +97,7 @@ export default function FilterSidebar() {
           <Filter className="h-5 w-5" />
           <span>Filters</span>
         </button>
-        <button onClick={resetFilters} className="text-sm text-orange-600 hover:text-orange-700">
+        <button onClick={handleReset} className="text-sm text-orange-600 hover:text-orange-700">
           Reset
         </button>
       </div>

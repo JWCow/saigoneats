@@ -2,14 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Search } from 'lucide-react';
 
-const categories = [
+const navigation = [
   { name: 'All Locations', href: '/locations' },
-  { name: 'Featured', href: '/featured' },
   { name: 'New Places', href: '/new' },
-  { name: 'Popular', href: '/popular' },
-  { name: 'Categories', href: '/categories' },
 ];
 
 export default function Header() {
@@ -30,21 +26,15 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {categories.map((category) => (
+            {navigation.map((item) => (
               <Link
-                key={category.name}
-                href={category.href}
+                key={item.name}
+                href={item.href}
                 className="text-gray-600 hover:text-orange-600 transition-colors"
               >
-                {category.name}
+                {item.name}
               </Link>
             ))}
-            <Link
-              href="/search"
-              className="p-2 text-gray-600 hover:text-orange-600 transition-colors"
-            >
-              <Search className="h-5 w-5" />
-            </Link>
           </nav>
 
           {/* Mobile menu button */}
@@ -74,24 +64,16 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4">
             <div className="flex flex-col space-y-4">
-              {categories.map((category) => (
+              {navigation.map((item) => (
                 <Link
-                  key={category.name}
-                  href={category.href}
+                  key={item.name}
+                  href={item.href}
                   className="text-gray-600 hover:text-orange-600 transition-colors px-4 py-2 hover:bg-gray-50 rounded-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {category.name}
+                  {item.name}
                 </Link>
               ))}
-              <Link
-                href="/search"
-                className="flex items-center space-x-2 text-gray-600 hover:text-orange-600 transition-colors px-4 py-2 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Search className="h-5 w-5" />
-                <span>Search</span>
-              </Link>
             </div>
           </div>
         )}

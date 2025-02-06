@@ -5,14 +5,23 @@ import FilterSidebar from '@/components/features/FilterSidebar';
 import LocationGrid from '@/components/features/LocationGrid';
 import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
-import { locations } from '@/data/locations';
+import { locations, District } from '@/data/locations';
+import { useSearchParams } from 'next/navigation';
 
 export default function LocationsPage() {
   const setLocations = useLocationStore((state) => state.setLocations);
+  const setSelectedDistrict = useLocationStore((state) => state.setSelectedDistrict);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     setLocations(locations);
-  }, [setLocations]);
+
+    // Get district from URL parameters and validate it
+    const district = searchParams.get('district');
+    if (district && Object.values(District).includes(district as District)) {
+      setSelectedDistrict(district as District);
+    }
+  }, [setLocations, setSelectedDistrict, searchParams]);
 
   return (
     <div className="min-h-screen bg-gray-50">
