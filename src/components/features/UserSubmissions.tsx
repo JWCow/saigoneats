@@ -5,6 +5,8 @@ import { db } from '@/lib/firebase/config';
 import { MapPin, Phone, Globe } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLocationStore } from '@/lib/store';
+import VoteButton from '@/components/ui/VoteButton';
+import { LocationType } from '@/data/locations';
 
 interface Submission {
   id: string;
@@ -223,16 +225,31 @@ export default function UserSubmissions() {
                       <span>•</span>
                       <span>{formatTimestamp(submission.createdAt)}</span>
                     </div>
-                    {submission.placeData.googleMapsUrl && (
-                      <a
-                        href={submission.placeData.googleMapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-orange-600 hover:text-orange-700"
-                      >
-                        View on Maps →
-                      </a>
-                    )}
+                    <div className="flex items-center space-x-4">
+                      <VoteButton 
+                        location={{
+                          id: submission.id,
+                          name: submission.placeData.name,
+                          type: submission.userInput.category.toLowerCase() as LocationType,
+                          fullAddress: submission.placeData.address,
+                          googleMapsUrl: submission.placeData.googleMapsUrl || '',
+                          features: [],
+                          priceRange: 'medium',
+                          votes: 0,
+                          votedBy: []
+                        }} 
+                      />
+                      {submission.placeData.googleMapsUrl && (
+                        <a
+                          href={submission.placeData.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-orange-600 hover:text-orange-700"
+                        >
+                          View on Maps →
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

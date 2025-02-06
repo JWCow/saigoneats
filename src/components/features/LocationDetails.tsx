@@ -17,6 +17,9 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
     high: { icon: <DollarSign className="h-4 w-4" />, label: 'High-end' },
   };
 
+  // Default to 'medium' if priceRange is not set
+  const priceRange = location.priceRange || 'medium';
+
   const getTagStyle = (feature: string) => {
     const normalizedFeature = feature.toLowerCase().replace(/-/g, ' ');
 
@@ -128,8 +131,8 @@ export default function LocationDetails({ location }: LocationDetailsProps) {
               </div>
 
               <div className="flex items-center space-x-2">
-                {priceRangeMap[location.priceRange].icon}
-                <span>{priceRangeMap[location.priceRange].label}</span>
+                {priceRangeMap[priceRange].icon}
+                <span>{priceRangeMap[priceRange].label}</span>
               </div>
 
               {location.openingHours && (

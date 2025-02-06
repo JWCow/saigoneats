@@ -1,42 +1,62 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import FilterSidebar from '@/components/features/FilterSidebar';
 import LocationGrid from '@/components/features/LocationGrid';
 import { useLocationStore } from '@/lib/store';
-import { useEffect } from 'react';
-import { locations, District, Cuisine } from '@/data/locations';
-import { useSearchParams } from 'next/navigation';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase/config';
+import { District, Cuisine, Location, LocationType } from '@/data/locations';
+import { useSearchParams, useRouter } from 'next/navigation';
 import UserSubmissions from '@/components/features/UserSubmissions';
 
 export default function LocationsPage() {
   const setLocations = useLocationStore((state) => state.setLocations);
   const setSelectedDistrict = useLocationStore((state) => state.setSelectedDistrict);
   const setSelectedCuisine = useLocationStore((state) => state.setSelectedCuisine);
+  const setSelectedType = useLocationStore((state) => state.setSelectedType);
   const resetFilters = useLocationStore((state) => state.resetFilters);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    // Reset all filters first
-    resetFilters();
-    setLocations(locations);
+    // Load locations from Firebase
+    const loadLocations = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'locations'));
+        const loadedLocations: Location[] = [];
+        querySnapshot.forEach((doc) => {
+          loadedLocations.push({ id: doc.id, ...doc.data() } as Location);
+        });
+        setLocations(loadedLocations);
+      } catch (error) {
+        console.error('Error loading locations:', error);
+      }
+    };
 
-    // Get district from URL parameters and validate it
+    loadLocations();
+  }, [setLocations]);
+
+  useEffect(() => {
+    // Get parameters from URL and set filters
+    const type = searchParams.get('type');
     const district = searchParams.get('district');
+    const cuisine = searchParams.get('cuisine');
+
+    if (type && Object.values(LocationType).includes(type.toLowerCase() as LocationType)) {
+      setSelectedType(type.toLowerCase() as LocationType);
+    }
+
     if (district && Object.values(District).includes(district as District)) {
       setSelectedDistrict(district as District);
     }
 
-    // Get cuisine from URL parameters and validate it
-    const cuisine = searchParams.get('cuisine');
     if (cuisine) {
-      // Convert the URL parameter to match the Cuisine enum format
       const normalizedCuisine = cuisine
         .split(' ')
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('');
 
-      // Find the matching cuisine in the enum
       const matchingCuisine = Object.values(Cuisine).find(
         (c) => c.toLowerCase() === cuisine.toLowerCase()
       );
@@ -45,16 +65,12 @@ export default function LocationsPage() {
         setSelectedCuisine(matchingCuisine);
       }
     }
-
-    // Cleanup function to reset filters when unmounting
-    return () => {
-      resetFilters();
-    };
-  }, [setLocations, setSelectedDistrict, setSelectedCuisine, resetFilters, searchParams]);
+  }, [searchParams, setSelectedDistrict, setSelectedCuisine, setSelectedType]);
 
   // Get the current filter values for the header text
   const district = searchParams.get('district');
   const cuisine = searchParams.get('cuisine');
+  const type = searchParams.get('type');
 
   // Helper function to format names
   const formatName = (str: string) => {
@@ -68,6 +84,7 @@ export default function LocationsPage() {
   const getHeaderText = () => {
     if (cuisine) return `${formatName(cuisine)} Restaurants`;
     if (district) return `Restaurants in ${district}`;
+    if (type) return `${formatName(type)}s`;
     return 'All Locations';
   };
 

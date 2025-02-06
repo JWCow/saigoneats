@@ -5,6 +5,7 @@ import React from 'react';
 import { Location } from '@/data/locations';
 import Link from 'next/link';
 import { MapPin, ExternalLink, DollarSign } from 'lucide-react';
+import VoteButton from '@/components/ui/VoteButton';
 
 interface LocationCardProps {
   location: Location;
@@ -16,6 +17,9 @@ function LocationCard({ location }: LocationCardProps) {
     medium: { icon: <DollarSign className="h-4 w-4" />, label: 'Moderate' },
     high: { icon: <DollarSign className="h-4 w-4" />, label: 'High-end' },
   };
+
+  // Default to 'medium' if priceRange is not set
+  const priceRange = location.priceRange || 'medium';
 
   // Helper function to determine tag style based on feature
   const getTagStyle = (feature: string) => {
@@ -122,8 +126,8 @@ function LocationCard({ location }: LocationCardProps) {
 
             {/* Price Range */}
             <div className="flex items-center space-x-2 text-sm text-gray-500">
-              {priceRangeMap[location.priceRange].icon}
-              <span>{priceRangeMap[location.priceRange].label}</span>
+              {priceRangeMap[priceRange].icon}
+              <span>{priceRangeMap[priceRange].label}</span>
             </div>
 
             {/* Features */}
@@ -145,21 +149,20 @@ function LocationCard({ location }: LocationCardProps) {
             )}
           </div>
 
-          {/* Google Maps Link */}
-          {location.googleMapsUrl && (
-            <div className="mt-4 pt-4 border-t">
-              <a
-                href={location.googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-sm text-orange-600 hover:text-orange-700"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <span>View on Google Maps</span>
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            </div>
-          )}
+          {/* Footer with Google Maps Link and Vote Button */}
+          <div className="mt-4 pt-4 border-t flex justify-between items-center">
+            <a
+              href={location.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 text-sm text-orange-600 hover:text-orange-700"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span>View on Google Maps</span>
+              <ExternalLink className="h-4 w-4" />
+            </a>
+            <VoteButton location={location} />
+          </div>
         </div>
       </div>
     </Link>

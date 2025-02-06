@@ -86,12 +86,12 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
 
   return {
     id: submission.id,
-    name: submission.placeData.name,
+    name: submission.placeData.name || 'Unnamed Location',
     type: submission.userInput.category.toLowerCase() as LocationType,
     cuisine: normalizeCuisine(submission.userInput.cuisine),
-    fullAddress: submission.placeData.address,
+    fullAddress: submission.placeData.address || 'Address not provided',
     googleMapsUrl: submission.placeData.googleMapsUrl || '',
-    features: generateFeatures(submission),
+    features: generateFeatures(submission) || [],
     priceRange: 'medium', // Default to medium since submissions don't have price range yet
     website: submission.placeData.website
       ? {
@@ -107,7 +107,9 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
       : undefined,
     description: submission.userInput.comments || undefined,
     submittedAt: new Date(submission.createdAt.seconds * 1000),
-    suggestedBy: submission.userInput.submitterName,
+    suggestedBy: submission.userInput.submitterName || 'Anonymous',
+    votes: 0,
+    votedBy: [],
   };
 };
 
@@ -246,14 +248,14 @@ export const useLocationStore = create<FilterState>((set, get) => ({
       filtered = filtered.filter((location) => {
         // Check both cuisine and features for a match
         const cuisineMatch = location.cuisine === selectedCuisine;
-        const featureMatch = location.features.some(
+        const featureMatch = location.features?.some(
           (feature) => feature.toLowerCase() === selectedCuisine.toLowerCase()
-        );
+        ) ?? false;
         const match = cuisineMatch || featureMatch;
 
         console.log(`Location ${location.name}:`, {
           cuisine: location.cuisine,
-          features: location.features,
+          features: location.features || [],
           selectedCuisine,
           cuisineMatch,
           featureMatch,
@@ -274,7 +276,7 @@ export const useLocationStore = create<FilterState>((set, get) => ({
 
     if (selectedDistrict) {
       filtered = filtered.filter((location) =>
-        location.fullAddress.toLowerCase().includes(selectedDistrict.toLowerCase())
+        location.fullAddress?.toLowerCase().includes(selectedDistrict.toLowerCase()) ?? false
       );
     }
 

@@ -90,6 +90,8 @@ export interface Location {
   reviews?: number;
   submittedAt?: Date;
   suggestedBy?: string;
+  votes?: number;
+  votedBy?: string[];
 }
 
 export const locations: Location[] = [

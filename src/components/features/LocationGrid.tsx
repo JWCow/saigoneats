@@ -5,6 +5,7 @@ import { useLocationStore } from '@/lib/store';
 import { Location } from '@/data/locations';
 import { MapPin, DollarSign, Phone, Globe, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import VoteButton from '@/components/ui/VoteButton';
 
 interface LocationCardProps {
   location: Location;
@@ -57,6 +58,9 @@ function LocationCard({ location }: LocationCardProps) {
     high: { icon: <DollarSign className="h-4 w-4" />, label: 'High-end' },
   };
 
+  // Default to 'medium' if priceRange is not set
+  const priceRange = location.priceRange || 'medium';
+
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6">
       <div className="space-y-4">
@@ -108,8 +112,8 @@ function LocationCard({ location }: LocationCardProps) {
 
         {/* Price Range */}
         <div className="flex items-center space-x-2 text-gray-500">
-          {priceRangeMap[location.priceRange].icon}
-          <span>{priceRangeMap[location.priceRange].label}</span>
+          {priceRangeMap[priceRange].icon}
+          <span>{priceRangeMap[priceRange].label}</span>
         </div>
 
         {/* Tags */}
@@ -157,17 +161,20 @@ function LocationCard({ location }: LocationCardProps) {
           <div className="text-sm text-gray-500">
             {location.suggestedBy && `Suggested by ${location.suggestedBy}`}
           </div>
-          {location.googleMapsUrl && (
-            <a
-              href={location.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-orange-600 hover:text-orange-700"
-              onClick={(e) => e.stopPropagation()}
-            >
-              View on Maps →
-            </a>
-          )}
+          <div className="flex items-center space-x-4">
+            <VoteButton location={location} />
+            {location.googleMapsUrl && (
+              <a
+                href={location.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-orange-600 hover:text-orange-700"
+                onClick={(e) => e.stopPropagation()}
+              >
+                View on Maps →
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>
