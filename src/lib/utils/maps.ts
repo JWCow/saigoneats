@@ -16,7 +16,7 @@ export function generateMapsUrl(address: Address): string {
 
     // Use Google Maps URL for web
     return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-  } catch (error) {
+  } catch (_error) {
     return '#';
   }
 }

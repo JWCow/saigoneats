@@ -1,6 +1,6 @@
 'use client';
 
-import { UtensilsCrossed, ChefHat, Cookie, UtensilsIcon } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 import { useState } from 'react';
 import SuggestionForm from '@/components/features/SuggestionForm';
 

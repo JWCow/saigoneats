@@ -160,7 +160,7 @@ export default function UserSubmissions() {
           style={{
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
+            msOverflowStyle: 'none',
           }}
         >
           {submissions.map((submission) => (
