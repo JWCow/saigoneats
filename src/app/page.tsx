@@ -10,6 +10,7 @@ import UserSubmissions from '@/components/features/UserSubmissions';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import InfiniteCarousel from '@/components/ui/InfiniteCarousel';
 
 export default function Home() {
   const setLocations = useLocationStore((state) => state.setLocations);
@@ -79,6 +80,9 @@ export default function Home() {
               <p className="mt-2 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:text-xl md:max-w-3xl">
                 Find and explore the finest restaurants, cafes, and hidden gems in Saigon.
               </p>
+            </div>
+            <div className="mt-8">
+              <InfiniteCarousel />
             </div>
           </motion.div>
         </div>
