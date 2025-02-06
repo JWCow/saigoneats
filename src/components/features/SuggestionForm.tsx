@@ -89,6 +89,13 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
   } = usePlacesAutocomplete({
     requestOptions: {
       componentRestrictions: { country: 'vn' },
+      // Define bounds for Ho Chi Minh City
+      bounds: {
+        north: 11.1602, // Northern boundary of HCMC
+        south: 10.3491, // Southern boundary of HCMC
+        east: 107.0265, // Eastern boundary of HCMC
+        west: 106.3634, // Western boundary of HCMC
+      },
       types: ['establishment'],
     },
     debounce: 300,
@@ -116,6 +123,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
     phone: '',
     website: '',
   });
+  const [submitterName, setSubmitterName] = useState('');
 
   const detectCategoryAndCuisine = (types: string[] = []) => {
     let detectedCuisine: Cuisine | '' = '';
@@ -227,6 +235,14 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       return;
     }
 
+    if (!submitterName.trim()) {
+      setToast({
+        message: 'Please enter your name',
+        type: 'error',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       // Create the suggestion data object based on entry type
@@ -235,24 +251,26 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           ? {
               name: manualData.name,
               address: `${manualData.street}, ${manualData.district}, Ho Chi Minh City`,
-              phone: manualData.phone,
-              website: manualData.website,
+              phone: manualData.phone || null,
+              website: manualData.website || null,
               district: manualData.district,
+              googleMapsUrl: null,
             }
           : {
               name: place?.name || '',
               address: place?.formatted_address || '',
-              phone: place?.formatted_phone_number || '',
-              website: place?.website || '',
-              googleMapsUrl: place?.url || '',
-              placeId: place?.place_id || '',
+              phone: place?.formatted_phone_number || null,
+              website: place?.website || null,
+              googleMapsUrl: place?.url || null,
+              placeId: place?.place_id || null,
             },
         userInput: {
           category,
-          cuisine: cuisine || null,
-          comments: comments.trim(),
+          cuisine,
+          comments: comments.trim() || null,
+          submitterName: submitterName.trim(),
         },
-        status: 'pending',
+        status: 'approved',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -264,7 +282,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       await addDoc(suggestionRef, suggestionData);
 
       setToast({
-        message: 'Thank you for your suggestion! We will review it shortly.',
+        message: 'Thank you for your suggestion! It has been added to the site.',
         type: 'success',
       });
 
@@ -274,6 +292,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       setCategory('');
       setCuisine('');
       setComments('');
+      setSubmitterName('');
       setManualData({
         name: '',
         street: '',
@@ -489,6 +508,21 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
                   rows={3}
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
                   placeholder="Add any additional information..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="submitterName" className="block text-sm font-medium text-gray-700">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  id="submitterName"
+                  value={submitterName}
+                  onChange={(e) => setSubmitterName(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                  placeholder="Enter your name"
+                  required
                 />
               </div>
 

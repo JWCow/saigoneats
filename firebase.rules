@@ -1,0 +1,15 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /suggestions/{document=**} {
+      allow read: if true;  // Allow anyone to read suggestions
+      allow create: if true && 
+        request.resource.data.placeData != null &&
+        request.resource.data.userInput != null &&
+        request.resource.data.status == 'approved' &&
+        request.resource.data.createdAt != null;
+      allow update, delete: if false;  // No updates or deletes allowed by clients
+    }
+  }
+} 
