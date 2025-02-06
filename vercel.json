@@ -1,5 +1,5 @@
 {
-  "regions": ["sin1", "hkg1"],
+  "regions": ["sin1"],
   "cleanUrls": true,
   "headers": [
     {
@@ -20,4 +20,4 @@
       ]
     }
   ]
-} 
+}
