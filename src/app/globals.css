@@ -21,7 +21,7 @@
   .bg-gradient {
     @apply bg-gradient-to-b from-orange-50/50 to-white;
   }
-  
+
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-orange-600 to-red-600;
   }

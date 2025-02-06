@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
 import { locations, District, Cuisine } from '@/data/locations';
-import { MapPin, Utensils, ChefHat, Search } from 'lucide-react';
+import { MapPin, Utensils, Search } from 'lucide-react';
 import UserSubmissions from '@/components/features/UserSubmissions';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const setLocations = useLocationStore((state) => state.setLocations);
@@ -47,14 +47,14 @@ export default function Home() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0 },
   };
 
   return (
@@ -63,7 +63,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -72,24 +72,20 @@ export default function Home() {
             <div className="space-y-4">
               <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                 <span className="block">Discover the Best Food in</span>
-                <span className="block text-gradient">
-                  Ho Chi Minh City
-                </span>
+                <span className="block text-gradient">Ho Chi Minh City</span>
               </h1>
               <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:text-xl md:max-w-3xl">
                 Find and explore the finest restaurants, cafes, and hidden gems in Saigon.
               </p>
             </div>
-            
+
             <div className="max-w-lg mx-auto flex gap-4 justify-center">
-              <Input 
-                placeholder="Search for restaurants..." 
+              <Input
+                placeholder="Search for restaurants..."
                 className="w-full max-w-sm shadow-sm"
                 prefix={<Search className="w-4 h-4 text-gray-400" />}
               />
-              <Button>
-                Search
-              </Button>
+              <Button>Search</Button>
             </div>
           </motion.div>
         </div>
@@ -129,7 +125,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
             Where do you want to eat?
           </h2>
-          <motion.div 
+          <motion.div
             variants={container}
             initial="hidden"
             animate="show"
@@ -164,7 +160,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
             What are you craving?
           </h2>
-          <motion.div 
+          <motion.div
             variants={container}
             initial="hidden"
             animate="show"
@@ -172,10 +168,7 @@ export default function Home() {
           >
             {mainCuisines.map((cuisine) => (
               <motion.div key={cuisine} variants={item}>
-                <Link
-                  href={`/locations?cuisine=${encodeURIComponent(cuisine)}`}
-                  className="block"
-                >
+                <Link href={`/locations?cuisine=${encodeURIComponent(cuisine)}`} className="block">
                   <Card className="group hover:shadow-md transition-all duration-200 border-2 hover:border-orange-200 h-full">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-2">
