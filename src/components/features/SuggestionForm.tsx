@@ -22,6 +22,29 @@ interface PlaceDetails {
   types?: string[];
 }
 
+interface Submission {
+  id: string;
+  placeData: {
+    name: string; // Required
+    address: string;
+    phone: string | null;
+    website: string | null;
+    district?: string;
+    googleMapsUrl: string | null;
+  };
+  userInput: {
+    submitterName: string;
+    category: string; // Required
+    cuisines: string[]; // Changed from cuisine: string | null to array
+    comments: string | null;
+  };
+  status: string;
+  createdAt: {
+    seconds: number;
+    nanoseconds: number;
+  };
+}
+
 // Add mapping for Google Places types to our categories
 const placeTypeToCategory: Record<string, LocationType> = {
   restaurant: LocationType.Restaurant,
@@ -104,7 +127,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
   const [place, setPlace] = useState<PlaceDetails | null>(null);
   const [category, setCategory] = useState<LocationType | ''>('');
-  const [cuisine, setCuisine] = useState<Cuisine | ''>('');
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
   const [comments, setComments] = useState('');
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -170,7 +193,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       }
 
       if (detectedCuisine) {
-        setCuisine(detectedCuisine);
+        setSelectedCuisines([detectedCuisine]);
       }
 
       // Create a simplified place object
@@ -210,11 +233,32 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
     }
   };
 
+  const handleCuisineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const options = e.target.options;
+    const selectedValues: string[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        selectedValues.push(options[i].value);
+      }
+    }
+    setSelectedCuisines(selectedValues);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
     if (!isManualEntry && !place) {
       setToast({
         message: 'Please select a location from the suggestions',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (isManualEntry && !manualData.name.trim()) {
+      setToast({
+        message: 'Please enter a location name',
         type: 'error',
       });
       return;
@@ -250,7 +294,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
             },
         userInput: {
           category,
-          cuisine: cuisine || null,
+          cuisines: selectedCuisines,
           comments: comments.trim(),
           submitterName: submitterName.trim(),
         },
@@ -274,7 +318,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       setValue('');
       setPlace(null);
       setCategory('');
-      setCuisine('');
+      setSelectedCuisines([]);
       setComments('');
       setSubmitterName('');
       setManualData({
@@ -356,7 +400,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
                   <div className="space-y-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                        Location Name
+                        Location Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="name"
@@ -365,6 +409,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
                         onChange={(e) => setManualData({ ...manualData, name: e.target.value })}
                         className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
                         required
+                        placeholder="Enter location name"
                       />
                     </div>
 
@@ -443,7 +488,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Category
+                  Category <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="category"
@@ -463,21 +508,25 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
               <div>
                 <label htmlFor="cuisine" className="block text-sm font-medium text-gray-700">
-                  Cuisine
+                  Cuisines (Select all that apply) (Ctrl/Cmd+Click)
                 </label>
                 <select
                   id="cuisine"
-                  value={cuisine}
-                  onChange={(e) => setCuisine(e.target.value as Cuisine)}
+                  multiple
+                  value={selectedCuisines}
+                  onChange={handleCuisineChange}
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 rounded-md"
+                  size={5}
                 >
-                  <option value="">Select a cuisine</option>
                   {Object.values(Cuisine).map((type) => (
                     <option key={type} value={type} className="capitalize">
                       {formatCategoryName(type)}
                     </option>
                   ))}
                 </select>
+                <p className="mt-1 text-sm text-gray-500">
+                  Selected: {selectedCuisines.map(formatCategoryName).join(', ')}
+                </p>
               </div>
 
               <div>
