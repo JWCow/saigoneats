@@ -252,7 +252,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           cuisine: cuisine || null,
           comments: comments.trim(),
         },
-        status: 'pending',
+        status: 'approved',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
