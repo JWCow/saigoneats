@@ -69,9 +69,9 @@ export default function Home() {
             className="text-center space-y-4"
           >
             <div className="space-y-3">
-              <h1 className="font-heading text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                <span className="block">Discover the Best Food in</span>
-                <span className="block text-gradient">Ho Chi Minh City</span>
+              <h1 className="font-heading text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl leading-tight">
+                <span className="block mb-2">Discover the Best Food in</span>
+                <span className="block text-gradient pb-1">Ho Chi Minh City</span>
               </h1>
               <p className="mt-2 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:text-xl md:max-w-3xl">
                 Find and explore the finest restaurants, cafes, and hidden gems in Saigon.
