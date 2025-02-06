@@ -18,9 +18,9 @@ export default function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-2 font-bold text-xl text-orange-600 hover:text-orange-700 transition-colors"
+            className="flex items-center space-x-1 font-bold text-xl text-orange-600 hover:text-orange-700 transition-colors whitespace-nowrap"
           >
-            <span className="hidden sm:inline">Saigon</span>
+            <span className="inline">Saigon</span>
             <span>Eats</span>
           </Link>
 
