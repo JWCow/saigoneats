@@ -118,9 +118,6 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
   });
 
   const detectCategoryAndCuisine = (types: string[] = []) => {
-    console.log('Detecting category and cuisine from types:', types);
-
-    // First try to detect cuisine
     let detectedCuisine: Cuisine | '' = '';
     for (const type of types) {
       if (type in placeTypeToCuisine) {
@@ -129,7 +126,6 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       }
     }
 
-    // Then try to detect category
     let detectedCategory: LocationType | '' = '';
     for (const type of types) {
       if (type in placeTypeToCategory) {
@@ -261,14 +257,11 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         updatedAt: serverTimestamp(),
       };
 
-      console.log('Submitting suggestion:', suggestionData);
-
       // Get a reference to the suggestions collection
       const suggestionRef = collection(db, 'suggestions');
 
       // Add the document
-      const docRef = await addDoc(suggestionRef, suggestionData);
-      console.log('Suggestion submitted with ID:', docRef.id);
+      await addDoc(suggestionRef, suggestionData);
 
       setToast({
         message: 'Thank you for your suggestion! We will review it shortly.',
@@ -295,7 +288,6 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         onClose();
       }, 2000);
     } catch (error) {
-      console.error('Error submitting suggestion:', error);
       setToast({
         message: 'Error submitting suggestion. Please try again.',
         type: 'error',

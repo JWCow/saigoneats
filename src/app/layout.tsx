@@ -4,9 +4,11 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
-import Script from 'next/script';
+import dynamic from 'next/dynamic';
 
 const inter = Inter({ subsets: ['latin'] });
+
+const GoogleMapsScript = dynamic(() => import('@/components/GoogleMapsScript'), { ssr: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://saigoneats.vercel.app'),
@@ -72,12 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full">
       <body className={`${inter.className} min-h-full flex flex-col`}>
-        <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-          strategy="afterInteractive"
-          async
-          defer
-        />
+        <GoogleMapsScript />
         <Header />
         <main className="flex-grow">{children}</main>
         <FloatingActionButton />
