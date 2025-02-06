@@ -11,22 +11,32 @@ export enum LocationType {
 }
 
 export enum Cuisine {
+  // Asian Cuisines
+  Vietnamese = 'vietnamese',
+  Chinese = 'chinese',
+  Japanese = 'japanese',
+  Korean = 'korean',
+  Thai = 'thai',
+
+  // Western Cuisines
+  American = 'american',
+  Italian = 'italian',
+  French = 'french',
+  Mexican = 'mexican',
+
+  // Categories
   Pizza = 'pizza',
   Burger = 'burger',
-  American = 'american',
-  Vietnamese = 'vietnamese',
-  Mexican = 'mexican',
-  Chinese = 'chinese',
-  Dessert = 'dessert',
-  Coffee = 'coffee',
+  Seafood = 'seafood',
+  BBQ = 'bbq',
+
+  // Other
   International = 'international',
-  Korean = 'korean',
-  Bakery = 'bakery',
-  StreetFood = 'street food',
-  French = 'french',
   Fusion = 'fusion',
-  Japanese = 'japanese',
-  Waffle = 'waffle',
+  StreetFood = 'street food',
+  Cafe = 'cafe',
+  Bakery = 'bakery',
+  Dessert = 'dessert',
 }
 
 export enum District {
@@ -424,7 +434,7 @@ export const locations: Location[] = [
     id: 'little-hanoi',
     name: 'Little HaNoi Egg Coffee',
     type: LocationType.Cafe,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Vietnamese,
     address: {
       street: '119/5 Đ. Yersin',
       district: District.D1,
@@ -468,7 +478,7 @@ export const locations: Location[] = [
     id: 'the-workshop',
     name: 'The Workshop Coffee',
     type: LocationType.Cafe,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '27 Ngô Đức Kế',
       district: District.D1,
@@ -481,10 +491,10 @@ export const locations: Location[] = [
     description: 'Industrial-style specialty coffee roastery and cafe',
   },
   {
-    id: 'cafe-apartment',
+    id: 'the-cafe-apartment',
     name: 'The Cafe Apartment',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '42 Nguyễn Huệ',
       district: District.D1,
@@ -500,7 +510,7 @@ export const locations: Location[] = [
     id: 'saigon-casa-cafe',
     name: 'Saigon Casa Café',
     type: LocationType.Cafe,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '07 Phạm Ngọc Thạch',
       district: District.D3,
@@ -546,7 +556,7 @@ export const locations: Location[] = [
     id: 'mister-waffle',
     name: 'Mister Waffle',
     type: LocationType.Cafe,
-    cuisine: Cuisine.Waffle,
+    cuisine: Cuisine.Dessert,
     address: {
       street: '72 Hàm Nghi',
       district: District.D1,
@@ -561,7 +571,7 @@ export const locations: Location[] = [
     id: '43-factory',
     name: '43 Factory Coffee Roaster',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '178a Pasteur',
       district: District.D1,
@@ -590,7 +600,7 @@ export const locations: Location[] = [
     id: 'faro-cafe',
     name: 'Faro Cafe Thảo Điền',
     type: LocationType.Cafe,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '81 Xuân Thủy',
       district: District.ThuDuc,
@@ -605,7 +615,7 @@ export const locations: Location[] = [
     id: 'running-bean-htm',
     name: 'The Running Bean Hồ Tùng Mậu',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '115 Đ. Hồ Tùng Mậu',
       district: District.D1,
@@ -619,7 +629,7 @@ export const locations: Location[] = [
     id: 'running-bean-mtb',
     name: 'The Running Bean Mạc Thị Bưởi',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '33 Mạc Thị Bưởi',
       district: District.D1,
@@ -634,7 +644,7 @@ export const locations: Location[] = [
     id: 'mojo-nguyen-hue',
     name: 'MOJO Boutique Coffee',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '129 Đ. Nguyễn Huệ',
       district: District.D1,
@@ -664,7 +674,7 @@ export const locations: Location[] = [
     id: 'signature-coffee-house',
     name: 'SIGNATURE By The Coffee House',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: 'Crescent Mall, 101 Tôn Dật Tiên',
       district: District.D7,
@@ -782,7 +792,7 @@ export const locations: Location[] = [
     id: 'manki-artisan',
     name: 'Manki True Artisan Café',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: 'Flat No.4, 1st floor, 42bis Lý Tự Trọng',
       district: District.D1,
@@ -797,7 +807,7 @@ export const locations: Location[] = [
     id: 'balcony-coffee',
     name: 'The Balcony Coffee',
     type: LocationType.CoffeeShop,
-    cuisine: Cuisine.Coffee,
+    cuisine: Cuisine.Cafe,
     address: {
       street: '26 Lý Tự Trọng',
       district: District.D1,

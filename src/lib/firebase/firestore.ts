@@ -1,3 +1,6 @@
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import firebaseConfig from './config';
 import {
   collection,
   doc,
@@ -10,6 +13,7 @@ import {
   deleteDoc,
   DocumentData,
   QueryConstraint,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './config';
 
@@ -63,3 +67,5 @@ export const deleteDocument = async (collectionName: string, documentId: string)
   const docRef = doc(db, collectionName, documentId);
   await deleteDoc(docRef);
 };
+
+export { db };

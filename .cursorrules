@@ -1,0 +1,290 @@
+Start every Chat with "🤖"
+
+# VisaReady Appointment System
+
+Every time you choose to apply a rule(s), explicitly state the rule(s) in the output. You can abbreviate the rule description to a single word or phrase.
+
+# Tech Stack
+- Next.js 14+ with App Router
+- TypeScript
+- Tailwind CSS
+- Zustand (State Management)
+- Firebase/Firestore
+- Vercel (Deployment)
+- shadcn/ui (Components)
+- react-hook-form
+- zod (Validation)
+
+# State Management
+- Use Zustand for global state
+- Keep state minimal and focused
+- Prefer local state when possible
+- Follow atomic design pattern
+- Use React Query for server state
+- Implement proper loading states
+- Handle error states gracefully
+
+# Syntax and Formatting
+- Use TypeScript strict mode
+- Follow ESLint configuration
+- Use Prettier for formatting
+- Follow conventional commits
+- Use meaningful variable names
+- Keep functions pure when possible
+- Maximum line length: 80 characters
+- Use proper TypeScript types (no any)
+- Use async/await over .then()
+- Use early returns
+- Avoid nested ternaries
+
+# UI and Styling
+- Follow Tailwind best practices
+- Use shadcn/ui components
+- Maintain consistent spacing
+- Mobile-first approach
+- Use CSS variables for theming
+- Keep components small (<100 lines)
+- Follow accessibility guidelines
+- Use semantic HTML
+- Implement proper loading states
+- Handle error states gracefully
+- Use proper color contrast
+
+# Performance Optimization
+- Implement proper code splitting
+- Use Next.js Image component
+- Optimize Firestore queries
+- Implement proper caching
+- Use React Suspense
+- Minimize bundle size
+- Lazy load components
+- Use proper memoization
+- Optimize fonts and icons
+- Implement proper error boundaries
+- Monitor performance metrics
+
+# Code Style and Structure
+- Follow feature-based folder structure
+- Keep files under 200 lines
+- One component per file
+- Separate business logic from UI
+- Use custom hooks for reusable logic
+- Follow DRY principles
+- Implement proper error boundaries
+- Use proper TypeScript interfaces
+- Keep component props minimal
+- Extract constants and utils
+- Follow SOLID principles
+
+Project Structure:
+```
+src/
+├── app/                      # Next.js App Router pages
+│   ├── layout.tsx           # Root layout
+│   ├── page.tsx             # Home page
+│   ├── error.tsx            # Error boundary
+│   ├── loading.tsx          # Loading state
+│   ├── not-found.tsx        # 404 page
+│   └── location/            # Location routes
+│       └── [id]/            # Dynamic location route
+│           └── page.tsx     # Location detail page
+├── components/              # React components
+│   ├── ui/                  # Reusable UI components
+│   │   ├── button.tsx
+│   │   ├── input.tsx
+│   │   └── ...
+│   ├── layout/             # Layout components
+│   │   ├── header.tsx
+│   │   ├── footer.tsx
+│   │   └── ...
+│   └── features/           # Feature-specific components
+│       ├── LocationDetails.tsx
+│       └── SuggestionForm.tsx
+├── lib/                    # Shared utilities
+│   ├── firebase/          # Firebase configuration
+│   │   └── firestore.ts
+│   ├── store.ts           # Zustand store
+│   ├── types.ts           # TypeScript types
+│   ├── constants.ts       # Constants
+│   └── utils.ts           # Utility functions
+├── styles/                # Global styles
+│   └── globals.css       # Global CSS
+└── types/                # TypeScript type definitions
+    └── index.d.ts        # Global type declarations
+```
+
+# Naming Conventions
+- Use PascalCase for components
+- Use camelCase for functions/variables
+- Use UPPER_CASE for constants
+- Use kebab-case for files
+- Prefix interfaces with 'I'
+- Prefix types with 'T'
+- Use descriptive names
+- Avoid abbreviations
+- Prefix private methods with '_'
+- Use 'handle' prefix for event handlers
+- Use 'is/has' prefix for booleans
+
+# Testing
+- Write unit tests for utils
+- Write integration tests for components
+- Use React Testing Library
+- Follow AAA pattern (Arrange-Act-Assert)
+- Mock external dependencies
+- Test error states
+- Test loading states
+- Test edge cases
+- Maintain 80%+ coverage
+- Use meaningful test descriptions
+- Test accessibility
+- Write E2E tests for critical paths
+
+# Security
+- Implement proper auth flows
+- Use proper Firebase security rules
+- Sanitize user inputs
+- Implement rate limiting
+- Use environment variables
+- Follow OWASP guidelines
+- Implement proper CORS
+- Use proper content security policy
+- Regular dependency updates
+- Implement proper validation
+- Handle sensitive data properly
+
+# Git Usage
+- Use feature branches
+- Write meaningful commit messages
+- Follow conventional commits
+- Keep PRs small (<400 lines)
+- Review all code changes
+- No direct commits to main
+- Squash commits when merging
+- Use proper git ignore
+- Tag releases properly
+- Keep main branch stable
+- Use proper branch naming
+
+# Documentation
+- Write clear README files
+- Document component props
+- Document custom hooks
+- Document state management
+- Keep docs up to date
+- Use JSDoc for functions
+- Document API endpoints
+- Include setup instructions
+- Document environment variables
+- Include troubleshooting guides
+- Document deployment process
+
+# Development Workflow
+- Use proper IDE setup
+- Follow code review process
+- Local testing before PR
+- Use proper linting
+- Use proper formatting
+- Follow branching strategy
+- Regular deployments
+- Proper error logging
+- Regular dependency updates
+- Follow semantic versioning
+- Use proper staging environment
+
+# Error Handling
+- Use custom error classes
+- Implement proper error boundaries
+- Log errors appropriately
+- Show user-friendly error messages
+- Handle async errors properly
+- Implement retry mechanisms
+- Use error tracking service
+- Handle network errors
+- Validate user inputs
+- Provide fallback UI
+- Document error codes
+
+# Hooks Guidelines
+- Follow hooks naming convention (use*)
+- Keep hooks focused and reusable
+- Handle cleanup in useEffect
+- Use proper dependency arrays
+- Avoid infinite loops
+- Handle loading states
+- Implement error handling
+- Use custom hooks for complex logic
+- Document hook parameters
+- Test hooks independently
+- Follow React hooks rules
+
+# Build Process
+- Use proper environment variables
+- Optimize bundle size
+- Implement proper caching
+- Configure proper CDN
+- Optimize images and assets
+- Implement proper code splitting
+- Configure proper build scripts
+- Handle build errors
+- Document build process
+- Implement proper CI/CD
+- Monitor build performance
+
+# API Structure
+```
+src/
+├── api/                    # API routes
+│   ├── locations/         # Location endpoints
+│   │   ├── route.ts      # GET/POST handlers
+│   │   └── [id]/         # Dynamic routes
+│   │       └── route.ts  # GET/PUT/DELETE handlers
+│   └── suggestions/      # Suggestion endpoints
+│       └── route.ts      # POST handler
+```
+
+# Internationalization (i18n)
+- Use Next.js i18n routing
+- Implement language detection
+- Use translation keys
+- Handle RTL languages
+- Format dates and numbers
+- Handle pluralization
+- Use proper locale files
+- Document translation process
+- Test different locales
+- Handle fallback languages
+- Implement language switcher
+
+# Project Configuration
+```
+├── .github/               # GitHub configuration
+│   └── workflows/        # GitHub Actions
+├── .husky/               # Git hooks
+├── public/               # Static assets
+├── src/                  # Source code
+├── .env.example          # Environment variables example
+├── .eslintrc.json       # ESLint configuration
+├── .prettierrc          # Prettier configuration
+├── .gitignore           # Git ignore rules
+├── next.config.js       # Next.js configuration
+├── package.json         # Dependencies and scripts
+├── tailwind.config.ts   # Tailwind configuration
+├── tsconfig.json        # TypeScript configuration
+└── README.md            # Project documentation
+```
+
+# Component Guidelines
+- Follow atomic design
+- Implement proper prop types
+- Use proper event handlers
+- Handle loading states
+- Implement error states
+- Use proper accessibility
+- Document component usage
+- Test component behavior
+- Keep components pure
+- Use proper memoization
+- Follow naming conventions
+
+

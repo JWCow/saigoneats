@@ -4,8 +4,24 @@ import React from 'react';
 import Link from 'next/link';
 import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
-import { locations, Cuisine, LocationType } from '@/data/locations';
+import { locations } from '@/data/locations';
 import SearchBar from '@/components/features/SearchBar';
+import { MapPin, Utensils, Clock } from 'lucide-react';
+
+const categories = [
+  { name: 'Restaurants', icon: Utensils, count: 150 },
+  { name: 'Cafes', icon: Clock, count: 75 },
+  { name: 'Street Food', icon: MapPin, count: 100 },
+];
+
+const cuisines = [
+  { name: 'Vietnamese', href: '/vietnamese', image: '/cuisines/vietnamese.jpg' },
+  { name: 'American', href: '/american', image: '/cuisines/american.jpg' },
+  { name: 'Japanese', href: '/japanese', image: '/cuisines/japanese.jpg' },
+  { name: 'Italian', href: '/italian', image: '/cuisines/italian.jpg' },
+  { name: 'Korean', href: '/korean', image: '/cuisines/korean.jpg' },
+  { name: 'Thai', href: '/thai', image: '/cuisines/thai.jpg' },
+];
 
 export default function Home() {
   const setLocations = useLocationStore((state) => state.setLocations);
@@ -17,10 +33,10 @@ export default function Home() {
   const featuredLocations = locations.slice(0, 6);
 
   return (
-    <main>
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-orange-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center">
             <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block">Discover the Best Food in</span>
@@ -29,70 +45,61 @@ export default function Home() {
             <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
               Find and explore the finest restaurants across different cuisines in Saigon.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 max-w-xl mx-auto">
               <SearchBar />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Locations */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Featured Locations</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredLocations.map((location) => (
-            <Link key={location.id} href={`/location/${location.id}`}>
-              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{location.name}</h3>
-                  <div className="text-sm text-gray-500 mb-4">
-                    <p>{location.address.street}</p>
-                    <p>
-                      {location.address.district}, {location.address.city}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                      {location.type}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {location.priceRange === 'low'
-                        ? '$'
-                        : location.priceRange === 'medium'
-                          ? '$$'
-                          : '$$$'}
-                    </span>
-                  </div>
+      {/* Categories Overview */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => (
+              <div
+                key={category.name}
+                className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-orange-500 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-orange-50 text-orange-600 ring-4 ring-white">
+                    <category.icon className="h-6 w-6" aria-hidden="true" />
+                  </span>
+                </div>
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium">
+                    <Link href={`/${category.name.toLowerCase()}`} className="focus:outline-none">
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      {category.name}
+                    </Link>
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">{category.count}+ locations</p>
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <Link
-            href="/locations"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700"
-          >
-            View All Locations
-          </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Browse by Type */}
-      <section className="bg-gray-50 py-16">
+      {/* Featured Locations */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">Browse by Type</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {Object.values(LocationType).map((type) => (
-              <Link
-                key={type}
-                href={`/locations?type=${type}`}
-                className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="p-6 text-center">
-                  <span className="text-lg font-medium text-gray-900 group-hover:text-orange-600">
-                    {type}
-                  </span>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">Featured Locations</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredLocations.map((location) => (
+              <Link key={location.id} href={`/location/${location.id}`} className="group">
+                <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
+                      {location.name}
+                    </h3>
+                    <div className="text-sm text-gray-500 space-y-1">
+                      <p className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {`${location.address.street}, ${location.address.district}`}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -101,28 +108,25 @@ export default function Home() {
       </section>
 
       {/* Browse by Cuisine */}
-      <section className="py-16">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Browse by Cuisine</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Object.values(Cuisine).map((cuisine) => (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {cuisines.map((cuisine) => (
               <Link
-                key={cuisine}
-                href={`/locations?cuisine=${cuisine}`}
-                className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                key={cuisine.name}
+                href={cuisine.href}
+                className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
               >
-                <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-orange-100 to-orange-50">
-                  <div className="p-6 flex items-center justify-center">
-                    <span className="text-xl font-semibold text-gray-900 group-hover:text-orange-600">
-                      {cuisine}
-                    </span>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 flex items-end p-4">
+                  <h3 className="text-lg font-medium text-white">{cuisine.name}</h3>
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

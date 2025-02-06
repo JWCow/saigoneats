@@ -2,40 +2,64 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Search } from 'lucide-react';
+
+const categories = [
+  { name: 'All Locations', href: '/locations' },
+  { name: 'Featured', href: '/featured' },
+  { name: 'New Places', href: '/new' },
+  { name: 'Popular', href: '/popular' },
+  { name: 'Categories', href: '/categories' },
+];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="font-bold text-xl text-orange-600">
-            Saigon Eats
+          <Link
+            href="/"
+            className="flex items-center space-x-2 font-bold text-xl text-orange-600 hover:text-orange-700 transition-colors"
+          >
+            <span className="hidden sm:inline">Saigon</span>
+            <span>Eats</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/american" className="text-gray-600 hover:text-orange-600">
-              American
-            </Link>
-            <Link href="/vietnamese" className="text-gray-600 hover:text-orange-600">
-              Vietnamese
-            </Link>
-            <Link href="/pizza" className="text-gray-600 hover:text-orange-600">
-              Pizza
-            </Link>
-            <Link href="/chinese" className="text-gray-600 hover:text-orange-600">
-              Chinese
+          <nav className="hidden md:flex items-center space-x-8">
+            {categories.map((category) => (
+              <Link
+                key={category.name}
+                href={category.href}
+                className="text-gray-600 hover:text-orange-600 transition-colors"
+              >
+                {category.name}
+              </Link>
+            ))}
+            <Link
+              href="/search"
+              className="p-2 text-gray-600 hover:text-orange-600 transition-colors"
+            >
+              <Search className="h-5 w-5" />
             </Link>
           </nav>
 
           {/* Mobile menu button */}
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            className="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
             <span className="sr-only">Open main menu</span>
-            {/* Hamburger icon */}
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -48,25 +72,25 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <div className="md:hidden py-4">
+            <div className="flex flex-col space-y-4">
+              {categories.map((category) => (
+                <Link
+                  key={category.name}
+                  href={category.href}
+                  className="text-gray-600 hover:text-orange-600 transition-colors px-4 py-2 hover:bg-gray-50 rounded-md"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {category.name}
+                </Link>
+              ))}
               <Link
-                href="/american"
-                className="block px-3 py-2 text-gray-600 hover:text-orange-600"
+                href="/search"
+                className="flex items-center space-x-2 text-gray-600 hover:text-orange-600 transition-colors px-4 py-2 hover:bg-gray-50 rounded-md"
+                onClick={() => setIsMenuOpen(false)}
               >
-                American
-              </Link>
-              <Link
-                href="/vietnamese"
-                className="block px-3 py-2 text-gray-600 hover:text-orange-600"
-              >
-                Vietnamese
-              </Link>
-              <Link href="/pizza" className="block px-3 py-2 text-gray-600 hover:text-orange-600">
-                Pizza
-              </Link>
-              <Link href="/chinese" className="block px-3 py-2 text-gray-600 hover:text-orange-600">
-                Chinese
+                <Search className="h-5 w-5" />
+                <span>Search</span>
               </Link>
             </div>
           </div>

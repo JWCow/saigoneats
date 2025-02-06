@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { LocationType, Cuisine } from '@/data/locations';
+import { LocationType, Cuisine, District } from '@/data/locations';
 import { db } from '@/lib/firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import usePlacesAutocomplete, { getGeocode, getDetails } from 'use-places-autocomplete';
@@ -12,20 +12,51 @@ interface SuggestionFormProps {
   onClose: () => void;
 }
 
+interface PlaceDetails {
+  name?: string;
+  formatted_address?: string;
+  formatted_phone_number?: string;
+  website?: string;
+  url?: string;
+  place_id?: string;
+  types?: string[];
+}
+
+// Add mapping for Google Places types to our categories
+const placeTypeToCategory: Record<string, LocationType> = {
+  restaurant: LocationType.Restaurant,
+  cafe: LocationType.Cafe,
+  bar: LocationType.Bar,
+  food: LocationType.Restaurant,
+  meal_takeaway: LocationType.Restaurant,
+  meal_delivery: LocationType.Restaurant,
+  bakery: LocationType.Bakery,
+  night_club: LocationType.Bar,
+};
+
+// Add mapping for place types to cuisines
+const placeTypeToCuisine: Record<string, Cuisine> = {
+  vietnamese_restaurant: Cuisine.Vietnamese,
+  chinese_restaurant: Cuisine.Chinese,
+  japanese_restaurant: Cuisine.Japanese,
+  thai_restaurant: Cuisine.Thai,
+  italian_restaurant: Cuisine.Italian,
+  american_restaurant: Cuisine.American,
+  korean_restaurant: Cuisine.Korean,
+  french_restaurant: Cuisine.French,
+  pizza_restaurant: Cuisine.Pizza,
+  burger_restaurant: Cuisine.Burger,
+  mexican_restaurant: Cuisine.Mexican,
+  seafood_restaurant: Cuisine.Seafood,
+  bbq_restaurant: Cuisine.BBQ,
+  bakery: Cuisine.Bakery,
+  cafe: Cuisine.Cafe,
+  dessert: Cuisine.Dessert,
+  restaurant: Cuisine.International,
+  food: Cuisine.International,
+};
+
 export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps) {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-
-  useEffect(() => {
-    // Check if Google Maps script is loaded
-    if (window.google && window.google.maps) {
-      setScriptLoaded(true);
-      console.log('Google Maps script loaded successfully');
-      console.log('API Key:', process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.slice(0, 8) + '...');
-    } else {
-      console.error('Google Maps script not loaded');
-    }
-  }, []);
-
   const {
     ready,
     value,
@@ -41,30 +72,10 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
     defaultValue: '',
   });
 
-  // Debug logs for Places Autocomplete
-  useEffect(() => {
-    console.log('Autocomplete State:', {
-      ready,
-      value,
-      status,
-      suggestions: data.length,
-    });
-  }, [ready, value, status, data]);
-
+  // Debug logs only in development
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    console.log('Input changed:', newValue);
-    setValue(newValue);
+    setValue(e.target.value);
   };
-
-  interface PlaceDetails {
-    name?: string;
-    formatted_address?: string;
-    formatted_phone_number?: string;
-    website?: string;
-    url?: string;
-    place_id?: string;
-  }
 
   const [place, setPlace] = useState<PlaceDetails | null>(null);
   const [category, setCategory] = useState<LocationType | ''>('');
@@ -72,9 +83,40 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
   const [comments, setComments] = useState('');
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [isManualEntry, setIsManualEntry] = useState(false);
+  const [manualData, setManualData] = useState({
+    name: '',
+    street: '',
+    district: '' as District | '',
+    phone: '',
+    website: '',
+  });
+
+  const detectCategoryAndCuisine = (types: string[] = []) => {
+    console.log('Detecting category and cuisine from types:', types);
+
+    // First try to detect cuisine
+    let detectedCuisine: Cuisine | '' = '';
+    for (const type of types) {
+      if (type in placeTypeToCuisine) {
+        detectedCuisine = placeTypeToCuisine[type];
+        break;
+      }
+    }
+
+    // Then try to detect category
+    let detectedCategory: LocationType | '' = '';
+    for (const type of types) {
+      if (type in placeTypeToCategory) {
+        detectedCategory = placeTypeToCategory[type];
+        break;
+      }
+    }
+
+    return { detectedCategory, detectedCuisine };
+  };
 
   const handleSelect = async (suggestion: any) => {
-    console.log('Selected suggestion:', suggestion);
     setValue(suggestion.description, false);
     clearSuggestions();
 
@@ -98,7 +140,16 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         ],
       })) as PlaceDetails;
 
-      console.log('Place details:', placeDetails);
+      // Detect category and cuisine from place types
+      const { detectedCategory, detectedCuisine } = detectCategoryAndCuisine(placeDetails.types);
+      
+      if (detectedCategory) {
+        setCategory(detectedCategory);
+      }
+      
+      if (detectedCuisine) {
+        setCuisine(detectedCuisine);
+      }
 
       // Create a simplified place object
       const simplifiedPlace: PlaceDetails = {
@@ -106,10 +157,9 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         formatted_address: placeDetails.formatted_address || suggestion.description,
         formatted_phone_number: placeDetails.formatted_phone_number || '',
         website: placeDetails.website || '',
-        url:
-          placeDetails.url ||
-          `https://www.google.com/maps/place/?q=place_id:${suggestion.place_id}`,
+        url: placeDetails.url || `https://www.google.com/maps/place/?q=place_id:${suggestion.place_id}`,
         place_id: suggestion.place_id,
+        types: placeDetails.types,
       };
 
       setPlace(simplifiedPlace);
@@ -118,7 +168,6 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         type: 'success',
       });
     } catch (error) {
-      console.error('Error fetching place details:', error);
       // Create a basic place object from the suggestion if details fetch fails
       const basicPlace: PlaceDetails = {
         name: suggestion.description,
@@ -130,8 +179,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       };
       setPlace(basicPlace);
       setToast({
-        message:
-          'Some location details could not be loaded, but you can still submit the suggestion.',
+        message: 'Some location details could not be loaded, but you can still submit the suggestion.',
         type: 'error',
       });
     }
@@ -139,7 +187,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!place) {
+    if (!isManualEntry && !place) {
       setToast({
         message: 'Please select a location from the suggestions',
         type: 'error',
@@ -157,16 +205,24 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
     setLoading(true);
     try {
-      // Create the suggestion data object
+      // Create the suggestion data object based on entry type
       const suggestionData = {
-        placeData: {
-          name: place.name || '',
-          address: place.formatted_address || '',
-          phone: place.formatted_phone_number || '',
-          website: place.website || '',
-          googleMapsUrl: place.url || '',
-          placeId: place.place_id || '',
-        },
+        placeData: isManualEntry
+          ? {
+              name: manualData.name,
+              address: `${manualData.street}, ${manualData.district}, Ho Chi Minh City`,
+              phone: manualData.phone,
+              website: manualData.website,
+              district: manualData.district,
+            }
+          : {
+              name: place?.name || '',
+              address: place?.formatted_address || '',
+              phone: place?.formatted_phone_number || '',
+              website: place?.website || '',
+              googleMapsUrl: place?.url || '',
+              placeId: place?.place_id || '',
+            },
         userInput: {
           category,
           cuisine: cuisine || null,
@@ -197,6 +253,14 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       setCategory('');
       setCuisine('');
       setComments('');
+      setManualData({
+        name: '',
+        street: '',
+        district: '',
+        phone: '',
+        website: '',
+      });
+      setIsManualEntry(false);
 
       // Close the modal after a short delay
       setTimeout(() => {
@@ -222,34 +286,133 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           <h2 className="text-2xl font-bold mb-4">Suggest a Location</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                Location
-              </label>
-              <input
-                id="location"
-                type="text"
-                value={value}
-                onChange={handleInputChange}
-                disabled={!ready}
-                placeholder={ready ? 'Search for a place...' : 'Loading...'}
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
-                autoComplete="off"
-              />
-              {status === 'OK' && value && (
-                <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                  {data.map((suggestion) => (
-                    <li
-                      key={suggestion.place_id}
-                      onClick={() => handleSelect(suggestion)}
-                      className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-50"
+            {!isManualEntry ? (
+              <>
+                <div className="relative">
+                  <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                    Location
+                  </label>
+                  <input
+                    id="location"
+                    type="text"
+                    value={value}
+                    onChange={handleInputChange}
+                    disabled={!ready}
+                    placeholder={ready ? 'Search for a place...' : 'Loading...'}
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100"
+                    autoComplete="off"
+                  />
+                  {status === 'OK' && value && (
+                    <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                      {data.map((suggestion) => (
+                        <li
+                          key={suggestion.place_id}
+                          onClick={() => handleSelect(suggestion)}
+                          className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-50"
+                        >
+                          {suggestion.description}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsManualEntry(true)}
+                  className="text-sm text-orange-600 hover:text-orange-700"
+                >
+                  Can't find the location? Enter details manually
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                      Location Name
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      value={manualData.name}
+                      onChange={(e) => setManualData({ ...manualData, name: e.target.value })}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="street" className="block text-sm font-medium text-gray-700">
+                      Street Address
+                    </label>
+                    <input
+                      id="street"
+                      type="text"
+                      value={manualData.street}
+                      onChange={(e) => setManualData({ ...manualData, street: e.target.value })}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="district" className="block text-sm font-medium text-gray-700">
+                      District
+                    </label>
+                    <select
+                      id="district"
+                      value={manualData.district}
+                      onChange={(e) =>
+                        setManualData({ ...manualData, district: e.target.value as District })
+                      }
+                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 rounded-md"
+                      required
                     >
-                      {suggestion.description}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                      <option value="">Select a district</option>
+                      {Object.values(District).map((district) => (
+                        <option key={district} value={district}>
+                          {district}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                      Phone Number (optional)
+                    </label>
+                    <input
+                      id="phone"
+                      type="text"
+                      value={manualData.phone}
+                      onChange={(e) => setManualData({ ...manualData, phone: e.target.value })}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="website" className="block text-sm font-medium text-gray-700">
+                      Website (optional)
+                    </label>
+                    <input
+                      id="website"
+                      type="url"
+                      value={manualData.website}
+                      onChange={(e) => setManualData({ ...manualData, website: e.target.value })}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsManualEntry(false)}
+                    className="text-sm text-orange-600 hover:text-orange-700"
+                  >
+                    Back to location search
+                  </button>
+                </div>
+              </>
+            )}
 
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700">
@@ -283,8 +446,8 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
               >
                 <option value="">Select a cuisine</option>
                 {Object.values(Cuisine).map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type} value={type} className="capitalize">
+                    {type.replace(/_/g, ' ')}
                   </option>
                 ))}
               </select>
@@ -314,7 +477,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
               </button>
               <button
                 type="submit"
-                disabled={loading || !place}
+                disabled={loading || (!place && !isManualEntry)}
                 className="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Submitting...' : 'Submit'}
