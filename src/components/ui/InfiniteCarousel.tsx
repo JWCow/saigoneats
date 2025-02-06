@@ -32,9 +32,9 @@ export default function InfiniteCarousel() {
         transition={{
           x: {
             repeat: Infinity,
-            repeatType: "loop",
+            repeatType: 'loop',
             duration: 20,
-            ease: "linear",
+            ease: 'linear',
           },
         }}
       >
@@ -59,4 +59,4 @@ export default function InfiniteCarousel() {
       </motion.div>
     </div>
   );
-} 
+}

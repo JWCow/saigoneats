@@ -17,6 +17,7 @@ interface Submission {
     category: string;
     cuisine: string | null;
     comments: string | null;
+    cuisines?: string[];
   };
   status: string;
   createdAt: {
@@ -45,9 +46,12 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
       features.push(submission.userInput.category);
     }
 
-    // Add cuisine as a feature if it exists
-    if (submission.userInput.cuisine) {
-      console.log('Adding cuisine feature:', submission.userInput.cuisine);
+    // Add cuisines as features
+    if (submission.userInput.cuisines && Array.isArray(submission.userInput.cuisines)) {
+      console.log('Adding cuisine features from array:', submission.userInput.cuisines);
+      features.push(...submission.userInput.cuisines);
+    } else if (submission.userInput.cuisine) {
+      console.log('Adding single cuisine feature:', submission.userInput.cuisine);
       features.push(submission.userInput.cuisine);
     }
 
@@ -84,15 +88,23 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
     return normalizedFeatures;
   };
 
+  // Safely handle createdAt timestamp
+  const submittedAt = submission.createdAt?.seconds 
+    ? new Date(submission.createdAt.seconds * 1000)
+    : new Date();
+
+  // Get the primary cuisine from the cuisines array if available
+  const primaryCuisine = submission.userInput.cuisines?.[0] || submission.userInput.cuisine;
+
   return {
     id: submission.id,
     name: submission.placeData.name || 'Unnamed Location',
     type: submission.userInput.category.toLowerCase() as LocationType,
-    cuisine: normalizeCuisine(submission.userInput.cuisine),
+    cuisine: normalizeCuisine(primaryCuisine),
     fullAddress: submission.placeData.address || 'Address not provided',
     googleMapsUrl: submission.placeData.googleMapsUrl || '',
     features: generateFeatures(submission) || [],
-    priceRange: 'medium', // Default to medium since submissions don't have price range yet
+    priceRange: 'medium',
     website: submission.placeData.website
       ? {
           url: submission.placeData.website,
@@ -106,7 +118,7 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
         }
       : undefined,
     description: submission.userInput.comments || undefined,
-    submittedAt: new Date(submission.createdAt.seconds * 1000),
+    submittedAt,
     suggestedBy: submission.userInput.submitterName || 'Anonymous',
     votes: 0,
     votedBy: [],

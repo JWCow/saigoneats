@@ -12,6 +12,19 @@ interface LocationCardProps {
 }
 
 function LocationCard({ location }: LocationCardProps) {
+  // Helper function to safely format date
+  const formatSubmissionDate = (date: Date | null | undefined) => {
+    if (!date) return null;
+    try {
+      // Ensure we have a valid Date object
+      const submissionDate = date instanceof Date ? date : new Date(date);
+      return formatDistanceToNow(submissionDate, { addSuffix: true });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return null;
+    }
+  };
+
   const getTagStyle = (feature: string) => {
     const normalizedFeature = feature.toLowerCase().replace(/-/g, ' ');
 
@@ -69,7 +82,7 @@ function LocationCard({ location }: LocationCardProps) {
           <h3 className="text-xl font-semibold text-gray-900">{location.name}</h3>
           {location.submittedAt && (
             <span className="text-sm text-orange-600 font-medium">
-              {formatDistanceToNow(location.submittedAt, { addSuffix: true })}
+              {formatSubmissionDate(location.submittedAt)}
             </span>
           )}
         </div>

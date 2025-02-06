@@ -30,7 +30,10 @@ export default function LocationsPage() {
         });
         setLocations(loadedLocations);
       } catch (error) {
-        console.error('Error loading locations:', error);
+        // Use a logger service in production
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        // eslint-disable-next-line no-console
+        console.error('Error loading locations:', errorMessage);
       }
     };
 

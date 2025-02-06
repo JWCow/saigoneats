@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import usePlacesAutocomplete, { getGeocode, getDetails } from 'use-places-autocomplete';
 import Toast from '@/components/ui/Toast';
+import { addApprovedSuggestionToLocations } from '@/lib/utils/suggestions';
 
 interface SuggestionFormProps {
   isOpen: boolean;
@@ -284,10 +285,18 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       const suggestionRef = collection(db, 'suggestions');
 
       // Add the document
-      await addDoc(suggestionRef, suggestionData);
+      const docRef = await addDoc(suggestionRef, suggestionData);
+      
+      // If the suggestion is approved, also add it to locations
+      if (suggestionData.status === 'approved') {
+        await addApprovedSuggestionToLocations({
+          id: docRef.id,
+          data: () => ({ ...suggestionData, createdAt: new Date() })
+        });
+      }
 
       setToast({
-        message: 'Thank you for your suggestion! We will review it shortly.',
+        message: 'Thank you for your suggestion! It has been added to our locations.',
         type: 'success',
       });
 
