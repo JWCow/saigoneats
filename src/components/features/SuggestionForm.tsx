@@ -22,29 +22,6 @@ interface PlaceDetails {
   types?: string[];
 }
 
-interface Submission {
-  id: string;
-  placeData: {
-    name: string; // Required
-    address: string;
-    phone: string | null;
-    website: string | null;
-    district?: string;
-    googleMapsUrl: string | null;
-  };
-  userInput: {
-    submitterName: string;
-    category: string; // Required
-    cuisines: string[]; // Changed from cuisine: string | null to array
-    comments: string | null;
-  };
-  status: string;
-  createdAt: {
-    seconds: number;
-    nanoseconds: number;
-  };
-}
-
 // Add mapping for Google Places types to our categories
 const placeTypeToCategory: Record<string, LocationType> = {
   restaurant: LocationType.Restaurant,
@@ -246,7 +223,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!isManualEntry && !place) {
       setToast({
@@ -562,14 +539,14 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={loading || (!place && !isManualEntry)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading}
+                  className="px-4 py-2 text-sm font-medium text-white bg-orange-600 border border-transparent rounded-md shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50"
                 >
                   {loading ? 'Submitting...' : 'Submit'}
                 </button>
