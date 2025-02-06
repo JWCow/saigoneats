@@ -27,6 +27,26 @@ interface Submission {
   };
 }
 
+const formatTimestamp = (timestamp: any) => {
+  if (!timestamp) return '';
+  
+  // Handle Firestore Timestamp
+  if (timestamp.seconds) {
+    return formatDistanceToNow(new Date(timestamp.seconds * 1000), {
+      addSuffix: true,
+    });
+  }
+  
+  // Handle JavaScript Date object (stored as ISO string)
+  if (timestamp instanceof Date || typeof timestamp === 'string') {
+    return formatDistanceToNow(new Date(timestamp), {
+      addSuffix: true,
+    });
+  }
+  
+  return '';
+};
+
 export default function UserSubmissions() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -150,9 +170,7 @@ export default function UserSubmissions() {
                       {submission.placeData.name}
                     </h3>
                     <span className="text-xs text-orange-600 font-medium whitespace-nowrap ml-2">
-                      {formatDistanceToNow(new Date(submission.createdAt.seconds * 1000), {
-                        addSuffix: true,
-                      })}
+                      {formatTimestamp(submission.createdAt)}
                     </span>
                   </div>
 
