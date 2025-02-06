@@ -5,7 +5,7 @@ import { useLocationStore } from '@/lib/store';
 import { LocationType, Cuisine, District } from '@/data/locations';
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 type PriceRange = 'low' | 'medium' | 'high';
 const priceRanges: PriceRange[] = ['low', 'medium', 'high'];
@@ -13,7 +13,6 @@ const priceRanges: PriceRange[] = ['low', 'medium', 'high'];
 type FilterSection = 'type' | 'cuisine' | 'district' | 'price';
 
 export default function FilterSidebar() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const {
     selectedType,
@@ -24,7 +23,6 @@ export default function FilterSidebar() {
     setSelectedCuisine,
     setSelectedDistrict,
     setPriceRange,
-    resetFilters,
   } = useLocationStore();
 
   const [expandedSections, setExpandedSections] = useState<FilterSection[]>(['district']);
@@ -61,14 +59,18 @@ export default function FilterSidebar() {
 
     const queryString = params.toString();
     const newUrl = `/locations${queryString ? `?${queryString}` : ''}`;
-    
+
     // Use replaceState to update URL without adding to history
-    window.history.replaceState({ 
-      district: selectedDistrict,
-      type: selectedType,
-      cuisine: selectedCuisine,
-      price: priceRange
-    }, '', newUrl);
+    window.history.replaceState(
+      {
+        district: selectedDistrict,
+        type: selectedType,
+        cuisine: selectedCuisine,
+        price: priceRange,
+      },
+      '',
+      newUrl
+    );
   }, [selectedDistrict, selectedType, selectedCuisine, priceRange, searchParams]);
 
   const toggleSection = (section: FilterSection) => {

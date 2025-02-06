@@ -7,7 +7,7 @@ import { useLocationStore } from '@/lib/store';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { District, Cuisine, Location, LocationType } from '@/data/locations';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import UserSubmissions from '@/components/features/UserSubmissions';
 
 export default function LocationsPage() {
@@ -15,9 +15,7 @@ export default function LocationsPage() {
   const setSelectedDistrict = useLocationStore((state) => state.setSelectedDistrict);
   const setSelectedCuisine = useLocationStore((state) => state.setSelectedCuisine);
   const setSelectedType = useLocationStore((state) => state.setSelectedType);
-  const resetFilters = useLocationStore((state) => state.resetFilters);
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   // Handle back/forward navigation
   useEffect(() => {
