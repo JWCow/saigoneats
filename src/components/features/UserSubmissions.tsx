@@ -166,7 +166,7 @@ export default function UserSubmissions() {
           {submissions.map((submission) => (
             <div
               key={submission.id}
-              className="w-[85vw] sm:w-[60vw] md:w-auto flex-shrink-0 snap-center md:snap-align-none first:ml-0 last:mr-4 md:first:ml-0 md:last:mr-0"
+              className="w-[55vw] sm:w-[60vw] md:w-auto flex-shrink-0 snap-center md:snap-align-none first:ml-0 last:mr-4 md:first:ml-0 md:last:mr-0"
             >
               <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4 h-full">
                 <div className="space-y-3">

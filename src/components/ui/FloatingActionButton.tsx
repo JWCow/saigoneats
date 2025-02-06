@@ -10,7 +10,7 @@ export default function FloatingActionButton() {
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 flex items-center">
-        <div className="mr-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm text-sm text-gray-600 animate-fade-in">
+        <div className="mr-2 bg-orange-600 text-white px-3 py-1.5 rounded-full shadow-sm text-sm animate-fade-in">
           Have a suggestion?
         </div>
         <button
