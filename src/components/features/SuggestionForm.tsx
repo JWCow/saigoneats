@@ -109,6 +109,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isManualEntry, setIsManualEntry] = useState(false);
+  const [submitterName, setSubmitterName] = useState('');
   const [manualData, setManualData] = useState({
     name: '',
     street: '',
@@ -251,6 +252,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           category,
           cuisine: cuisine || null,
           comments: comments.trim(),
+          submitterName: submitterName.trim(),
         },
         status: 'approved',
         createdAt: serverTimestamp(),
@@ -274,6 +276,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       setCategory('');
       setCuisine('');
       setComments('');
+      setSubmitterName('');
       setManualData({
         name: '',
         street: '',
@@ -489,6 +492,21 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
                   rows={3}
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
                   placeholder="Add any additional information..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="submitterName" className="block text-sm font-medium text-gray-700">
+                  Your Name
+                </label>
+                <input
+                  id="submitterName"
+                  type="text"
+                  value={submitterName}
+                  onChange={(e) => setSubmitterName(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+                  required
+                  placeholder="Enter your name"
                 />
               </div>
 
