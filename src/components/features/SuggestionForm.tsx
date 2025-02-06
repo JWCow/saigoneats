@@ -286,12 +286,12 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
       // Add the document
       const docRef = await addDoc(suggestionRef, suggestionData);
-      
+
       // If the suggestion is approved, also add it to locations
       if (suggestionData.status === 'approved') {
         await addApprovedSuggestionToLocations({
           id: docRef.id,
-          data: () => ({ ...suggestionData, createdAt: new Date() })
+          data: () => ({ ...suggestionData, createdAt: new Date() }),
         });
       }
 

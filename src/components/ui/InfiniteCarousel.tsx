@@ -39,10 +39,7 @@ export default function InfiniteCarousel() {
         }}
       >
         {duplicatedFoodItems.map((item, index) => (
-          <div
-            key={`${item.name}-${index}`}
-            className="relative flex-none w-36 h-36 group"
-          >
+          <div key={`${item.name}-${index}`} className="relative flex-none w-36 h-36 group">
             <div className="relative w-full h-full rounded-lg overflow-hidden shadow-md">
               <Image
                 src={`/images/food/${item.name}.jpg`}

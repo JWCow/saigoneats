@@ -89,7 +89,7 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
   };
 
   // Safely handle createdAt timestamp
-  const submittedAt = submission.createdAt?.seconds 
+  const submittedAt = submission.createdAt?.seconds
     ? new Date(submission.createdAt.seconds * 1000)
     : new Date();
 

@@ -15,10 +15,13 @@ export default function MigratePage() {
     setIsLoading(true);
     setStatus('Starting migration...');
     setMigrationLog([]);
-    
+
     try {
       // First, migrate static locations
-      setMigrationLog(prev => [...prev, `Found ${locations.length} static locations to migrate:`]);
+      setMigrationLog((prev) => [
+        ...prev,
+        `Found ${locations.length} static locations to migrate:`,
+      ]);
       for (const location of locations) {
         const locationWithVoting = {
           ...location,
@@ -28,18 +31,27 @@ export default function MigratePage() {
         };
 
         await setDoc(doc(db, 'locations', location.id), locationWithVoting);
-        setMigrationLog(prev => [...prev, `✓ Successfully migrated static location: ${location.name}`]);
+        setMigrationLog((prev) => [
+          ...prev,
+          `✓ Successfully migrated static location: ${location.name}`,
+        ]);
       }
 
       // Then, migrate approved suggestions to locations collection
-      const suggestionsQuery = query(collection(db, 'suggestions'), where('status', '==', 'approved'));
+      const suggestionsQuery = query(
+        collection(db, 'suggestions'),
+        where('status', '==', 'approved')
+      );
       const suggestionsSnapshot = await getDocs(suggestionsQuery);
-      
-      setMigrationLog(prev => [...prev, `\nFound ${suggestionsSnapshot.size} approved suggestions to migrate:`]);
-      
+
+      setMigrationLog((prev) => [
+        ...prev,
+        `\nFound ${suggestionsSnapshot.size} approved suggestions to migrate:`,
+      ]);
+
       for (const suggestionDoc of suggestionsSnapshot.docs) {
         const suggestion = suggestionDoc.data();
-        
+
         // Convert suggestion to location format
         const locationData = {
           id: suggestionDoc.id,
@@ -48,22 +60,24 @@ export default function MigratePage() {
           cuisine: suggestion.userInput.cuisine || null,
           fullAddress: suggestion.placeData.address || '',
           googleMapsUrl: suggestion.placeData.googleMapsUrl || '',
-          features: suggestion.userInput.cuisine ? [suggestion.userInput.cuisine, 'Dine-in'] : ['Dine-in'],
+          features: suggestion.userInput.cuisine
+            ? [suggestion.userInput.cuisine, 'Dine-in']
+            : ['Dine-in'],
           priceRange: 'medium',
           ...(suggestion.placeData.phone && {
             contact: {
               phone: suggestion.placeData.phone,
               phoneClickable: suggestion.placeData.phone.replace(/[^0-9+]/g, ''),
-            }
+            },
           }),
           ...(suggestion.placeData.website && {
             website: {
               url: suggestion.placeData.website,
-              label: 'Visit Website'
-            }
+              label: 'Visit Website',
+            },
           }),
           ...(suggestion.userInput.comments && {
-            description: suggestion.userInput.comments
+            description: suggestion.userInput.comments,
           }),
           submittedAt: suggestion.createdAt || null,
           suggestedBy: suggestion.userInput.submitterName || 'Anonymous',
@@ -73,20 +87,23 @@ export default function MigratePage() {
 
         // Add to locations collection
         await setDoc(doc(db, 'locations', suggestionDoc.id), locationData);
-        setMigrationLog(prev => [...prev, `✓ Successfully migrated suggestion: ${suggestion.placeData.name}`]);
+        setMigrationLog((prev) => [
+          ...prev,
+          `✓ Successfully migrated suggestion: ${suggestion.placeData.name}`,
+        ]);
       }
 
       // Verify final migration count
       const locationsSnapshot = await getDocs(collection(db, 'locations'));
       const totalLocations = locationsSnapshot.size;
-      
-      setMigrationLog(prev => [
+
+      setMigrationLog((prev) => [
         ...prev,
         `\nMigration complete!`,
         `Total locations in database: ${totalLocations}`,
         `- Static locations: ${locations.length}`,
         `- Migrated suggestions: ${suggestionsSnapshot.size}`,
-        `✓ All locations successfully migrated!`
+        `✓ All locations successfully migrated!`,
       ]);
 
       setStatus('Migration complete!');
@@ -94,7 +111,7 @@ export default function MigratePage() {
       const errorMessage = error?.message || 'Unknown error';
       // eslint-disable-next-line no-console
       console.error('Error during migration:', error);
-      setMigrationLog(prev => [...prev, `❌ Error during migration: ${errorMessage}`]);
+      setMigrationLog((prev) => [...prev, `❌ Error during migration: ${errorMessage}`]);
       setStatus(`Error during migration: ${errorMessage}`);
     } finally {
       setIsLoading(false);
@@ -115,9 +132,7 @@ export default function MigratePage() {
         {migrationLog.length > 0 && (
           <div className="mt-4 p-4 bg-gray-100 rounded">
             <h2 className="font-semibold mb-2">Migration Log:</h2>
-            <pre className="whitespace-pre-wrap text-sm">
-              {migrationLog.join('\n')}
-            </pre>
+            <pre className="whitespace-pre-wrap text-sm">{migrationLog.join('\n')}</pre>
           </div>
         )}
       </div>
