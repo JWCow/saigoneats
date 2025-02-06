@@ -61,7 +61,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             Where do you want to eat?
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
             {Object.values(District).map((district) => (
               <Link
                 key={district}
@@ -86,7 +86,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             What are you craving?
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
             {mainCuisines.map((cuisine) => (
               <Link
                 key={cuisine}
