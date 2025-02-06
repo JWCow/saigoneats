@@ -6,7 +6,6 @@ import { db } from '@/lib/firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import usePlacesAutocomplete, { getGeocode, getDetails } from 'use-places-autocomplete';
 import Toast from '@/components/ui/Toast';
-import { addApprovedSuggestionToLocations } from '@/lib/utils/suggestions';
 
 interface SuggestionFormProps {
   isOpen: boolean;
@@ -253,7 +252,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
     setLoading(true);
     try {
       // Create the suggestion data object based on entry type
-      const suggestionData = {
+      const locationData = {
         placeData: isManualEntry
           ? {
               name: manualData.name,
@@ -277,26 +276,50 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
           submitterName: submitterName.trim(),
         },
         status: 'approved',
+        source: 'suggestion',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
+        votes: 0,
+        votedBy: [],
       };
 
-      // Get a reference to the suggestions collection
-      const suggestionRef = collection(db, 'suggestions');
+      // Get a reference to the locations collection
+      const locationsRef = collection(db, 'locations');
 
       // Add the document
-      const docRef = await addDoc(suggestionRef, suggestionData);
-
-      // If the suggestion is approved, also add it to locations
-      if (suggestionData.status === 'approved') {
-        await addApprovedSuggestionToLocations({
-          id: docRef.id,
-          data: () => ({ ...suggestionData, createdAt: new Date() }),
-        });
-      }
+      await addDoc(locationsRef, {
+        name: locationData.placeData.name,
+        type: locationData.userInput.category?.toLowerCase() || 'restaurant',
+        cuisine: locationData.userInput.cuisines?.[0] || null,
+        fullAddress: locationData.placeData.address,
+        googleMapsUrl: locationData.placeData.googleMapsUrl || '',
+        features: locationData.userInput.cuisines || ['Dine-in'],
+        priceRange: 'medium',
+        ...(locationData.placeData.phone && {
+          contact: {
+            phone: locationData.placeData.phone,
+            phoneClickable: locationData.placeData.phone.replace(/[^0-9+]/g, ''),
+          },
+        }),
+        ...(locationData.placeData.website && {
+          website: {
+            url: locationData.placeData.website,
+            label: 'Visit Website',
+          },
+        }),
+        ...(locationData.userInput.comments && {
+          description: locationData.userInput.comments,
+        }),
+        submittedAt: serverTimestamp(),
+        suggestedBy: locationData.userInput.submitterName || 'Anonymous',
+        status: 'approved',
+        source: 'suggestion',
+        votes: 0,
+        votedBy: [],
+      });
 
       setToast({
-        message: 'Thank you for your suggestion! It has been added to our locations.',
+        message: 'Thank you for your suggestion! Your location has been added.',
         type: 'success',
       });
 

@@ -7,37 +7,15 @@ import { doc, setDoc, getDocs, collection, query, where } from 'firebase/firesto
 import { Button } from '@/components/ui/button';
 
 export default function MigratePage() {
-  const [status, setStatus] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [migrationLog, setMigrationLog] = useState<string[]>([]);
 
   const migrateLocations = async () => {
     setIsLoading(true);
-    setStatus('Starting migration...');
     setMigrationLog([]);
 
     try {
-      // First, migrate static locations
-      setMigrationLog((prev) => [
-        ...prev,
-        `Found ${locations.length} static locations to migrate:`,
-      ]);
-      for (const location of locations) {
-        const locationWithVoting = {
-          ...location,
-          votes: 0,
-          votedBy: [],
-          priceRange: location.priceRange || 'medium',
-        };
-
-        await setDoc(doc(db, 'locations', location.id), locationWithVoting);
-        setMigrationLog((prev) => [
-          ...prev,
-          `✓ Successfully migrated static location: ${location.name}`,
-        ]);
-      }
-
-      // Then, migrate approved suggestions to locations collection
+      // First, get all approved suggestions
       const suggestionsQuery = query(
         collection(db, 'suggestions'),
         where('status', '==', 'approved')
@@ -46,9 +24,10 @@ export default function MigratePage() {
 
       setMigrationLog((prev) => [
         ...prev,
-        `\nFound ${suggestionsSnapshot.size} approved suggestions to migrate:`,
+        `Found ${suggestionsSnapshot.size} approved suggestions to migrate:`,
       ]);
 
+      // Convert and merge suggestions into locations
       for (const suggestionDoc of suggestionsSnapshot.docs) {
         const suggestion = suggestionDoc.data();
 
@@ -81,8 +60,10 @@ export default function MigratePage() {
           }),
           submittedAt: suggestion.createdAt || null,
           suggestedBy: suggestion.userInput.submitterName || 'Anonymous',
-          votes: 0,
-          votedBy: [],
+          votes: suggestion.votes || 0,
+          votedBy: suggestion.votedBy || [],
+          status: 'approved',
+          source: 'suggestion',
         };
 
         // Add to locations collection
@@ -90,6 +71,29 @@ export default function MigratePage() {
         setMigrationLog((prev) => [
           ...prev,
           `✓ Successfully migrated suggestion: ${suggestion.placeData.name}`,
+        ]);
+      }
+
+      // Now migrate static locations
+      setMigrationLog((prev) => [
+        ...prev,
+        `\nFound ${locations.length} static locations to migrate:`,
+      ]);
+
+      for (const location of locations) {
+        const locationWithMeta = {
+          ...location,
+          votes: 0,
+          votedBy: [],
+          priceRange: location.priceRange || 'medium',
+          status: 'approved',
+          source: 'static',
+        };
+
+        await setDoc(doc(db, 'locations', location.id), locationWithMeta);
+        setMigrationLog((prev) => [
+          ...prev,
+          `✓ Successfully migrated static location: ${location.name}`,
         ]);
       }
 
@@ -105,14 +109,9 @@ export default function MigratePage() {
         `- Migrated suggestions: ${suggestionsSnapshot.size}`,
         `✓ All locations successfully migrated!`,
       ]);
-
-      setStatus('Migration complete!');
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error';
-      // eslint-disable-next-line no-console
-      console.error('Error during migration:', error);
       setMigrationLog((prev) => [...prev, `❌ Error during migration: ${errorMessage}`]);
-      setStatus(`Error during migration: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }

@@ -56,8 +56,8 @@ export default function VoteButton({ location, userId, className = '' }: VoteBut
         setHasVoted(false);
         localStorage.removeItem(storageKey);
       }
-    } catch (error) {
-      console.error('Error updating vote:', error);
+    } catch {
+      // Handle error silently in production
     } finally {
       setIsVoting(false);
     }

@@ -120,8 +120,8 @@ const convertSubmissionToLocation = (submission: Submission): Location => {
     description: submission.userInput.comments || undefined,
     submittedAt,
     suggestedBy: submission.userInput.submitterName || 'Anonymous',
-    votes: 0,
-    votedBy: [],
+    votes: (submission as any).votes || 0,
+    votedBy: (submission as any).votedBy || [],
   };
 };
 

@@ -19,8 +19,7 @@ function LocationCard({ location }: LocationCardProps) {
       // Ensure we have a valid Date object
       const submissionDate = date instanceof Date ? date : new Date(date);
       return formatDistanceToNow(submissionDate, { addSuffix: true });
-    } catch (error) {
-      console.error('Error formatting date:', error);
+    } catch {
       return null;
     }
   };

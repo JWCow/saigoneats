@@ -1,68 +1,69 @@
-/* eslint-disable no-console */
 'use client';
 
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { MapPin, Phone, Globe } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import VoteButton from '@/components/ui/VoteButton';
-import { LocationType } from '@/data/locations';
+import { LocationType, Cuisine, Location as BaseLocation } from '@/data/locations';
 
-interface Submission {
-  id: string;
-  placeData: {
-    name: string;
-    address: string;
-    phone: string | null;
-    website: string | null;
-    district?: string;
-    googleMapsUrl: string | null;
-  };
-  userInput: {
-    submitterName: string;
-    category: string;
-    cuisine: string | null;
-    comments: string | null;
-  };
-  status: string;
-  createdAt: {
-    seconds: number;
-    nanoseconds: number;
-  };
+interface Location extends Omit<BaseLocation, 'submittedAt'> {
+  source: 'suggestion' | 'static';
+  status: 'approved' | 'pending';
+  submittedAt: any; // Keep this as any since we handle the conversion in the code
 }
 
 export default function NewPlacesPage() {
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissions, setSubmissions] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
-      const q = query(collection(db, 'suggestions'), orderBy('createdAt', 'desc'), limit(20));
+      // Simplified query to test index issues
+      const q = query(
+        collection(db, 'locations'),
+        where('source', '==', 'suggestion'),
+        orderBy('submittedAt', 'desc'),
+        limit(50)
+      );
 
       const unsubscribe = onSnapshot(
         q,
         (snapshot) => {
           const newSubmissions = snapshot.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }) as Submission)
-            .filter((submission) => submission.status === 'approved');
+            .map((doc) => {
+              const data = doc.data();
+              // Ensure submittedAt is properly handled
+              const submittedAt = data.submittedAt?.toDate?.() || data.submittedAt;
+              // Convert cuisine string to enum if it exists
+              const cuisine = data.cuisine ? (data.cuisine.toLowerCase() as Cuisine) : undefined;
+              return {
+                id: doc.id,
+                ...data,
+                submittedAt,
+                cuisine,
+                type: data.type.toLowerCase() as LocationType,
+                features: data.features || [],
+                priceRange: data.priceRange || 'medium',
+              } as Location;
+            })
+            .filter((submission) => submission.status === 'approved'); // Filter in memory instead
 
           setSubmissions(newSubmissions);
           setLoading(false);
           setError(null);
         },
-        (err) => {
-          console.error('Error fetching submissions:', err);
+        (_err) => {
           setError('Error fetching submissions');
           setLoading(false);
         }
       );
 
       return () => unsubscribe();
-    } catch (err) {
-      console.error('Error setting up submissions listener:', err);
+    } catch (_err) {
       setError('Error setting up submissions listener');
       setLoading(false);
     }
@@ -98,114 +99,85 @@ export default function NewPlacesPage() {
         <div className="space-y-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">New Places</h1>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-600">
               Recently added locations suggested by our community
             </p>
           </div>
 
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {submissions.map((submission) => (
               <div
                 key={submission.id}
-                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-6"
+                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4"
               >
-                <div className="space-y-4">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {submission.placeData.name}
-                    </h3>
-                    <span className="text-sm text-orange-600 font-medium">
-                      {formatDistanceToNow(new Date(submission.createdAt.seconds * 1000), {
-                        addSuffix: true,
-                      })}
-                    </span>
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{submission.name}</h3>
                   </div>
 
-                  <div className="flex items-start space-x-2 text-gray-500">
-                    <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                    <span>{submission.placeData.address}</span>
+                  <div className="flex items-start space-x-2 text-sm text-gray-500">
+                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span className="line-clamp-2">{submission.fullAddress}</span>
                   </div>
 
-                  {submission.placeData.phone && (
-                    <div className="flex items-center space-x-2 text-gray-500">
-                      <Phone className="h-5 w-5 flex-shrink-0" />
-                      <span>{submission.placeData.phone}</span>
-                    </div>
-                  )}
-
-                  {submission.placeData.website && (
-                    <div className="flex items-center space-x-2">
-                      <Globe className="h-5 w-5 flex-shrink-0 text-gray-500" />
-                      <a
-                        href={submission.placeData.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-orange-600 hover:text-orange-700"
-                      >
-                        Visit Website
-                      </a>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-2">
-                    {submission.userInput.category && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                        {submission.userInput.category}
-                      </span>
+                  <div className="flex items-center gap-4 flex-wrap text-sm">
+                    {submission.contact && submission.contact.phone && (
+                      <div className="flex items-center space-x-2 text-gray-500">
+                        <Phone className="h-4 w-4 flex-shrink-0" />
+                        <span>{submission.contact.phone}</span>
+                      </div>
                     )}
-                    {submission.userInput.cuisine && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {submission.userInput.cuisine}
-                      </span>
-                    )}
-                  </div>
 
-                  {submission.userInput.comments && (
-                    <div className="text-gray-600 italic">
-                      &ldquo;{submission.userInput.comments}&rdquo;
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="text-sm text-gray-500">
-                      Suggested by {submission.userInput.submitterName}
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <VoteButton
-                        location={{
-                          id: submission.id,
-                          name: submission.placeData.name,
-                          type: submission.userInput.category.toLowerCase() as LocationType,
-                          fullAddress: submission.placeData.address,
-                          googleMapsUrl: submission.placeData.googleMapsUrl || '',
-                          features: [],
-                          priceRange: 'medium',
-                          votes: 0,
-                          votedBy: [],
-                        }}
-                      />
-                      {submission.placeData.googleMapsUrl && (
+                    {submission.website && (
+                      <div className="flex items-center space-x-2">
+                        <Globe className="h-4 w-4 flex-shrink-0 text-gray-500" />
                         <a
-                          href={submission.placeData.googleMapsUrl}
+                          href={submission.website.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-orange-600 hover:text-orange-700"
+                          className="text-orange-600 hover:text-orange-700 truncate max-w-[120px]"
                         >
-                          View on Maps →
+                          Visit Website
                         </a>
-                      )}
+                      </div>
+                    )}
+
+                    {(submission.type || submission.cuisine) && (
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {submission.type && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            {submission.type}
+                          </span>
+                        )}
+                        {submission.cuisine && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {submission.cuisine}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {submission.description && (
+                    <div className="text-sm text-gray-600 italic line-clamp-2">
+                      {submission.description}
                     </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <span>Suggested by {submission.suggestedBy}</span>
+                      <span>•</span>
+                      <span>
+                        {formatDistanceToNow(submission.submittedAt, { addSuffix: true })}
+                      </span>
+                    </div>
+                    <VoteButton location={submission} />
                   </div>
                 </div>
               </div>
             ))}
           </div>
-
-          {submissions.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No new places have been added yet.</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

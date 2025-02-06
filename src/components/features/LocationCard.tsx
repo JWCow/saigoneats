@@ -5,7 +5,7 @@ import React from 'react';
 import { Location } from '@/data/locations';
 import Link from 'next/link';
 import { MapPin, ExternalLink, DollarSign } from 'lucide-react';
-import VoteButton from '@/components/ui/VoteButton';
+import VoteButton from '../../components/ui/VoteButton';
 
 interface LocationCardProps {
   location: Location;
@@ -25,7 +25,6 @@ function LocationCard({ location }: LocationCardProps) {
   const getTagStyle = (feature: string) => {
     // Convert to lowercase and remove any special characters
     const normalizedFeature = feature.toLowerCase().replace(/-/g, ' ');
-    console.log('Processing feature:', feature, 'normalized:', normalizedFeature);
 
     // Cuisine-related features
     if (
@@ -39,8 +38,7 @@ function LocationCard({ location }: LocationCardProps) {
       normalizedFeature.includes('french') ||
       normalizedFeature.includes('mexican')
     ) {
-      console.log('Cuisine match:', feature);
-      return 'bg-blue-200 text-blue-900 border border-blue-300'; // Stronger blue
+      return 'bg-blue-200 text-blue-900 border border-blue-300';
     }
 
     // Food type features
@@ -57,8 +55,7 @@ function LocationCard({ location }: LocationCardProps) {
       normalizedFeature.includes('banh mi') ||
       normalizedFeature.includes('wings')
     ) {
-      console.log('Food type match:', feature);
-      return 'bg-green-200 text-green-900 border border-green-300'; // Stronger green
+      return 'bg-green-200 text-green-900 border border-green-300';
     }
 
     // Service features
@@ -69,8 +66,7 @@ function LocationCard({ location }: LocationCardProps) {
       normalizedFeature.includes('reservation') ||
       normalizedFeature.includes('breakfast')
     ) {
-      console.log('Service match:', feature);
-      return 'bg-purple-200 text-purple-900 border border-purple-300'; // Stronger purple
+      return 'bg-purple-200 text-purple-900 border border-purple-300';
     }
 
     // Ambiance/style features
@@ -83,19 +79,16 @@ function LocationCard({ location }: LocationCardProps) {
       normalizedFeature.includes('steakhouse') ||
       normalizedFeature.includes('wine')
     ) {
-      console.log('Ambiance match:', feature);
-      return 'bg-pink-200 text-pink-900 border border-pink-300'; // Stronger pink
+      return 'bg-pink-200 text-pink-900 border border-pink-300';
     }
 
     // Special features
     if (normalizedFeature.includes('ny style') || normalizedFeature.includes('american style')) {
-      console.log('Special match:', feature);
-      return 'bg-teal-200 text-teal-900 border border-teal-300'; // Stronger teal
+      return 'bg-teal-200 text-teal-900 border border-teal-300';
     }
 
     // Default style
-    console.log('No category match, using default:', feature);
-    return 'bg-gray-200 text-gray-900 border border-gray-300'; // Stronger gray
+    return 'bg-gray-200 text-gray-900 border border-gray-300';
   };
 
   return (
@@ -133,18 +126,16 @@ function LocationCard({ location }: LocationCardProps) {
             {/* Features */}
             {location.features && location.features.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-2">
-                {location.features.map((feature) => {
-                  const style = getTagStyle(feature);
-                  console.log(`Applying style for ${feature}:`, style);
-                  return (
-                    <span
-                      key={feature}
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${style} shadow-sm`}
-                    >
-                      {feature}
-                    </span>
-                  );
-                })}
+                {location.features.map((feature) => (
+                  <span
+                    key={feature}
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTagStyle(
+                      feature
+                    )} shadow-sm`}
+                  >
+                    {feature}
+                  </span>
+                ))}
               </div>
             )}
           </div>
