@@ -25,4 +25,4 @@ async function migrateLocations() {
 }
 
 // Run the migration
-migrateLocations(); 
+migrateLocations();

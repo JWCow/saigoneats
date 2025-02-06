@@ -36,7 +36,7 @@ export default function VoteButton({ location, userId, className = '' }: VoteBut
 
     try {
       const locationRef = doc(db, 'locations', location.id);
-      
+
       if (!hasVoted) {
         // Add vote
         await updateDoc(locationRef, {
@@ -68,17 +68,13 @@ export default function VoteButton({ location, userId, className = '' }: VoteBut
       onClick={handleVote}
       disabled={isVoting}
       className={`inline-flex items-center space-x-1 text-sm ${
-        hasVoted
-          ? 'text-orange-600 hover:text-orange-700'
-          : 'text-gray-500 hover:text-gray-600'
+        hasVoted ? 'text-orange-600 hover:text-orange-700' : 'text-gray-500 hover:text-gray-600'
       } transition-colors ${className}`}
     >
       <ThumbsUp
-        className={`h-4 w-4 ${hasVoted ? 'fill-current' : ''} ${
-          isVoting ? 'animate-pulse' : ''
-        }`}
+        className={`h-4 w-4 ${hasVoted ? 'fill-current' : ''} ${isVoting ? 'animate-pulse' : ''}`}
       />
       <span>{voteCount}</span>
     </button>
   );
-} 
+}

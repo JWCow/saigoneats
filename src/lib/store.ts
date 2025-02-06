@@ -248,9 +248,10 @@ export const useLocationStore = create<FilterState>((set, get) => ({
       filtered = filtered.filter((location) => {
         // Check both cuisine and features for a match
         const cuisineMatch = location.cuisine === selectedCuisine;
-        const featureMatch = location.features?.some(
-          (feature) => feature.toLowerCase() === selectedCuisine.toLowerCase()
-        ) ?? false;
+        const featureMatch =
+          location.features?.some(
+            (feature) => feature.toLowerCase() === selectedCuisine.toLowerCase()
+          ) ?? false;
         const match = cuisineMatch || featureMatch;
 
         console.log(`Location ${location.name}:`, {
@@ -275,8 +276,9 @@ export const useLocationStore = create<FilterState>((set, get) => ({
     }
 
     if (selectedDistrict) {
-      filtered = filtered.filter((location) =>
-        location.fullAddress?.toLowerCase().includes(selectedDistrict.toLowerCase()) ?? false
+      filtered = filtered.filter(
+        (location) =>
+          location.fullAddress?.toLowerCase().includes(selectedDistrict.toLowerCase()) ?? false
       );
     }
 

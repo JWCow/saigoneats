@@ -40,8 +40,8 @@ export default function MigratePage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Migrate Locations to Firebase</h1>
       <div className="space-y-4">
-        <Button 
-          onClick={migrateLocations} 
+        <Button
+          onClick={migrateLocations}
           disabled={isLoading}
           className="bg-orange-600 hover:bg-orange-700 text-white"
         >
@@ -55,4 +55,4 @@ export default function MigratePage() {
       </div>
     </div>
   );
-} 
+}

@@ -226,7 +226,7 @@ export default function UserSubmissions() {
                       <span>{formatTimestamp(submission.createdAt)}</span>
                     </div>
                     <div className="flex items-center space-x-4">
-                      <VoteButton 
+                      <VoteButton
                         location={{
                           id: submission.id,
                           name: submission.placeData.name,
@@ -236,8 +236,8 @@ export default function UserSubmissions() {
                           features: [],
                           priceRange: 'medium',
                           votes: 0,
-                          votedBy: []
-                        }} 
+                          votedBy: [],
+                        }}
                       />
                       {submission.placeData.googleMapsUrl && (
                         <a
