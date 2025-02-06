@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
+import Link from 'next/link';
+import Logo from '@/components/ui/Logo';
 
 const navigation = [
   { name: 'All Locations', href: '/locations' },
@@ -14,15 +15,11 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-[60px]">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center space-x-1 font-bold text-xl text-orange-600 hover:text-orange-700 transition-colors whitespace-nowrap"
-          >
-            <span className="inline">Saigon</span>
-            <span>Eats</span>
-          </Link>
+          <div className="flex-shrink-0">
+            <Logo showText={false} size="3xl" className="h-[60px]" />
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -39,7 +36,7 @@ export default function Header() {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+            className="md:hidden p-1.5 rounded-md hover:bg-gray-100 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -62,8 +59,8 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4">
-            <div className="flex flex-col space-y-4">
+          <div className="md:hidden py-2">
+            <div className="flex flex-col space-y-2">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
