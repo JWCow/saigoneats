@@ -1,19 +1,14 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import firebaseConfig from './config';
 import {
   collection,
   doc,
   getDoc,
   getDocs,
   query,
-  where,
   addDoc,
   updateDoc,
   deleteDoc,
   DocumentData,
   QueryConstraint,
-  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './config';
 
