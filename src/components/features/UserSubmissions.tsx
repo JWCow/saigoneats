@@ -1,95 +1,132 @@
 /* eslint-disable no-console */
+'use client';
+
 import { useEffect, useState, useRef } from 'react';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { MapPin, Phone, Globe } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { useLocationStore } from '@/lib/store';
 import VoteButton from '@/components/ui/VoteButton';
 import { LocationType } from '@/data/locations';
 
-interface Submission {
+interface Location {
   id: string;
-  placeData: {
-    name: string;
-    address: string;
-    phone: string | null;
-    website: string | null;
-    district?: string;
-    googleMapsUrl: string | null;
+  name: string;
+  type: string;
+  cuisine: string;
+  fullAddress: string;
+  contact?: {
+    phone: string;
+    phoneClickable: string;
   };
-  userInput: {
-    submitterName: string;
-    category: string;
-    cuisine: string | null;
-    comments: string | null;
+  website?: {
+    url: string;
+    label: string;
   };
-  status: string;
-  createdAt: {
-    seconds: number;
-    nanoseconds: number;
-  };
+  description?: string;
+  submittedAt: any;
+  suggestedBy: string;
+  status: 'approved' | 'pending';
+  source: 'suggestion' | 'static';
+  votes: number;
+  votedBy: string[];
+  googleMapsUrl?: string;
 }
 
 const formatTimestamp = (timestamp: any) => {
   if (!timestamp) return '';
 
-  // Handle Firestore Timestamp
-  if (timestamp.seconds) {
-    return formatDistanceToNow(new Date(timestamp.seconds * 1000), {
+  try {
+    // Handle Firestore Timestamp
+    if (timestamp.toDate) {
+      return formatDistanceToNow(timestamp.toDate(), {
+        addSuffix: true,
+      });
+    }
+
+    // Handle seconds timestamp
+    if (timestamp.seconds) {
+      return formatDistanceToNow(new Date(timestamp.seconds * 1000), {
+        addSuffix: true,
+      });
+    }
+
+    // Handle JavaScript Date object or ISO string
+    const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+    return formatDistanceToNow(date, {
       addSuffix: true,
     });
+  } catch (error) {
+    console.error('Error formatting timestamp:', error, timestamp);
+    return 'Recently';
   }
-
-  // Handle JavaScript Date object (stored as ISO string)
-  if (timestamp instanceof Date || typeof timestamp === 'string') {
-    return formatDistanceToNow(new Date(timestamp), {
-      addSuffix: true,
-    });
-  }
-
-  return '';
 };
 
 export default function UserSubmissions() {
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissions, setSubmissions] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
   const [showRightGradient, setShowRightGradient] = useState(true);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const setUserSubmissions = useLocationStore((state) => state.setUserSubmissions);
 
   useEffect(() => {
-    try {
-      const q = query(collection(db, 'suggestions'), orderBy('createdAt', 'desc'), limit(20));
+    let unsubscribe: (() => void) | undefined;
 
-      const unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          const newSubmissions = snapshot.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }) as Submission)
-            .filter((submission) => submission.status === 'approved');
+    async function setupListener() {
+      try {
+        const q = query(
+          collection(db, 'locations'),
+          where('source', '==', 'suggestion'),
+          orderBy('submittedAt', 'desc'),
+          limit(50)
+        );
 
-          setSubmissions(newSubmissions);
-          setUserSubmissions(newSubmissions);
-          setLoading(false);
-          setError(null);
-        },
-        (err) => {
-          console.error('Error fetching submissions:', err);
-          setError('Error fetching submissions');
-          setLoading(false);
-        }
-      );
+        unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            const newSubmissions = snapshot.docs
+              .map((doc) => {
+                const data = doc.data() as Location & {
+                  status: 'approved' | 'pending';
+                  source: 'suggestion' | 'static';
+                };
+                // Ensure submittedAt is properly handled
+                const submittedAt = data.submittedAt?.toDate?.() || data.submittedAt;
+                const { id: _, ...rest } = data;
+                return {
+                  id: doc.id,
+                  ...rest,
+                  submittedAt,
+                };
+              })
+              .filter((submission) => submission.status === 'approved') as Location[];
 
-      return () => unsubscribe();
-    } catch (err) {
-      console.error('Error setting up submissions listener:', err);
-      setError('Error setting up submissions listener');
-      setLoading(false);
+            setSubmissions(newSubmissions);
+            setLoading(false);
+            setError(null);
+          },
+          (err) => {
+            console.error('Error fetching submissions:', err);
+            setError('Error fetching submissions');
+            setLoading(false);
+          }
+        );
+      } catch (err) {
+        console.error('Error setting up submissions listener:', err);
+        setError('Error setting up submissions listener');
+        setLoading(false);
+      }
     }
-  }, [setUserSubmissions]);
+
+    setupListener();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
 
   // Add scroll handler
   const handleScroll = () => {
@@ -165,29 +202,27 @@ export default function UserSubmissions() {
               <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4 h-full">
                 <div className="space-y-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {submission.placeData.name}
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{submission.name}</h3>
                   </div>
 
                   <div className="flex items-start space-x-2 text-sm text-gray-500">
                     <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span className="line-clamp-2">{submission.placeData.address}</span>
+                    <span className="line-clamp-2">{submission.fullAddress}</span>
                   </div>
 
                   <div className="flex items-center gap-4 flex-wrap text-sm">
-                    {submission.placeData.phone && (
+                    {submission.contact && submission.contact.phone && (
                       <div className="flex items-center space-x-2 text-gray-500">
                         <Phone className="h-4 w-4 flex-shrink-0" />
-                        <span>{submission.placeData.phone}</span>
+                        <span>{submission.contact.phone}</span>
                       </div>
                     )}
 
-                    {submission.placeData.website && (
+                    {submission.website && (
                       <div className="flex items-center space-x-2">
                         <Globe className="h-4 w-4 flex-shrink-0 text-gray-500" />
                         <a
-                          href={submission.placeData.website}
+                          href={submission.website.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-orange-600 hover:text-orange-700 truncate max-w-[120px]"
@@ -197,51 +232,51 @@ export default function UserSubmissions() {
                       </div>
                     )}
 
-                    {(submission.userInput.category || submission.userInput.cuisine) && (
+                    {(submission.type || submission.cuisine) && (
                       <div className="flex items-center gap-2 flex-wrap">
-                        {submission.userInput.category && (
+                        {submission.type && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                            {submission.userInput.category}
+                            {submission.type}
                           </span>
                         )}
-                        {submission.userInput.cuisine && (
+                        {submission.cuisine && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {submission.userInput.cuisine}
+                            {submission.cuisine}
                           </span>
                         )}
                       </div>
                     )}
                   </div>
 
-                  {submission.userInput.comments && (
+                  {submission.description && (
                     <div className="text-sm text-gray-600 italic line-clamp-2">
-                      &ldquo;{submission.userInput.comments}&rdquo;
+                      &ldquo;{submission.description}&rdquo;
                     </div>
                   )}
 
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                     <div className="flex items-center space-x-2 text-xs text-gray-500">
-                      <span>by {submission.userInput.submitterName}</span>
+                      <span>Suggested by {submission.suggestedBy}</span>
                       <span>•</span>
-                      <span>{formatTimestamp(submission.createdAt)}</span>
+                      <span>{formatTimestamp(submission.submittedAt)}</span>
                     </div>
                     <div className="flex items-center space-x-4">
                       <VoteButton
                         location={{
                           id: submission.id,
-                          name: submission.placeData.name,
-                          type: submission.userInput.category.toLowerCase() as LocationType,
-                          fullAddress: submission.placeData.address,
-                          googleMapsUrl: submission.placeData.googleMapsUrl || '',
+                          name: submission.name,
+                          type: submission.type.toLowerCase() as LocationType,
+                          fullAddress: submission.fullAddress,
+                          googleMapsUrl: submission.googleMapsUrl || '',
                           features: [],
                           priceRange: 'medium',
-                          votes: 0,
-                          votedBy: [],
+                          votes: submission.votes || 0,
+                          votedBy: submission.votedBy || [],
                         }}
                       />
-                      {submission.placeData.googleMapsUrl && (
+                      {submission.googleMapsUrl && (
                         <a
-                          href={submission.placeData.googleMapsUrl}
+                          href={submission.googleMapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs text-orange-600 hover:text-orange-700"
