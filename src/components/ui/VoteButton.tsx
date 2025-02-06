@@ -20,55 +20,61 @@ export default function VoteButton({ location, userId, className = '' }: VoteBut
     location.votedBy?.includes(userId || '') || localStorage.getItem(storageKey) === 'true'
   );
 
-  const handleVote = useCallback(async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleVote = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    if (isVoting) return;
+      if (isVoting) return;
 
-    // Optimistically update UI
-    const isAddingVote = !localHasVoted;
-    setLocalHasVoted(isAddingVote);
-    setLocalVoteCount((prev) => prev + (isAddingVote ? 1 : -1));
-    
-    // Update localStorage immediately
-    if (isAddingVote) {
-      localStorage.setItem(storageKey, 'true');
-    } else {
-      localStorage.removeItem(storageKey);
-    }
+      // Optimistically update UI
+      const isAddingVote = !localHasVoted;
+      setLocalHasVoted(isAddingVote);
+      setLocalVoteCount((prev) => prev + (isAddingVote ? 1 : -1));
 
-    // Start background update
-    setIsVoting(true);
-    try {
-      const locationRef = doc(db, 'locations', location.id);
-      await updateDoc(locationRef, {
-        votes: increment(isAddingVote ? 1 : -1),
-        votedBy: isAddingVote 
-          ? arrayUnion(userId || 'anonymous')
-          : arrayRemove(userId || 'anonymous'),
-      });
-    } catch (error) {
-      // Revert optimistic updates on error
-      setLocalHasVoted(!isAddingVote);
-      setLocalVoteCount((prev) => prev + (isAddingVote ? -1 : 1));
+      // Update localStorage immediately
       if (isAddingVote) {
-        localStorage.removeItem(storageKey);
-      } else {
         localStorage.setItem(storageKey, 'true');
+      } else {
+        localStorage.removeItem(storageKey);
       }
-      console.error('Error updating vote:', error);
-    } finally {
-      setIsVoting(false);
-    }
-  }, [isVoting, localHasVoted, location.id, storageKey, userId]);
+
+      // Start background update
+      setIsVoting(true);
+      try {
+        const locationRef = doc(db, 'locations', location.id);
+        await updateDoc(locationRef, {
+          votes: increment(isAddingVote ? 1 : -1),
+          votedBy: isAddingVote
+            ? arrayUnion(userId || 'anonymous')
+            : arrayRemove(userId || 'anonymous'),
+        });
+      } catch (error) {
+        // Revert optimistic updates on error
+        setLocalHasVoted(!isAddingVote);
+        setLocalVoteCount((prev) => prev + (isAddingVote ? -1 : 1));
+        if (isAddingVote) {
+          localStorage.removeItem(storageKey);
+        } else {
+          localStorage.setItem(storageKey, 'true');
+        }
+        // eslint-disable-next-line no-console
+        console.error('Error updating vote:', error);
+      } finally {
+        setIsVoting(false);
+      }
+    },
+    [isVoting, localHasVoted, location.id, storageKey, userId]
+  );
 
   return (
     <button
       onClick={handleVote}
       disabled={isVoting}
       className={`inline-flex items-center space-x-1 text-sm ${
-        localHasVoted ? 'text-orange-600 hover:text-orange-700' : 'text-gray-500 hover:text-gray-600'
+        localHasVoted
+          ? 'text-orange-600 hover:text-orange-700'
+          : 'text-gray-500 hover:text-gray-600'
       } transition-colors ${className}`}
     >
       <ThumbsUp
