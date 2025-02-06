@@ -5,12 +5,13 @@ import FilterSidebar from '@/components/features/FilterSidebar';
 import LocationGrid from '@/components/features/LocationGrid';
 import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
-import { locations, District } from '@/data/locations';
+import { locations, District, Cuisine } from '@/data/locations';
 import { useSearchParams } from 'next/navigation';
 
 export default function LocationsPage() {
   const setLocations = useLocationStore((state) => state.setLocations);
   const setSelectedDistrict = useLocationStore((state) => state.setSelectedDistrict);
+  const setSelectedCuisine = useLocationStore((state) => state.setSelectedCuisine);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -21,7 +22,32 @@ export default function LocationsPage() {
     if (district && Object.values(District).includes(district as District)) {
       setSelectedDistrict(district as District);
     }
-  }, [setLocations, setSelectedDistrict, searchParams]);
+
+    // Get cuisine from URL parameters and validate it
+    const cuisine = searchParams.get('cuisine');
+    if (cuisine && Object.values(Cuisine).includes(cuisine as Cuisine)) {
+      setSelectedCuisine(cuisine as Cuisine);
+    }
+  }, [setLocations, setSelectedDistrict, setSelectedCuisine, searchParams]);
+
+  // Get the current filter values for the header text
+  const district = searchParams.get('district');
+  const cuisine = searchParams.get('cuisine');
+
+  // Helper function to format names
+  const formatName = (str: string) => {
+    return str
+      .split(/[\s_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  // Generate header text based on filters
+  const getHeaderText = () => {
+    if (cuisine) return `${formatName(cuisine)} Restaurants`;
+    if (district) return `Restaurants in ${district}`;
+    return 'All Locations';
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -29,7 +55,7 @@ export default function LocationsPage() {
         <div className="flex flex-col space-y-8">
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">All Locations</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{getHeaderText()}</h1>
             <p className="mt-2 text-sm text-gray-500">
               Discover great places to eat and drink in Ho Chi Minh City
             </p>
