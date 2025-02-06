@@ -29,21 +29,21 @@ interface Submission {
 
 const formatTimestamp = (timestamp: any) => {
   if (!timestamp) return '';
-  
+
   // Handle Firestore Timestamp
   if (timestamp.seconds) {
     return formatDistanceToNow(new Date(timestamp.seconds * 1000), {
       addSuffix: true,
     });
   }
-  
+
   // Handle JavaScript Date object (stored as ISO string)
   if (timestamp instanceof Date || typeof timestamp === 'string') {
     return formatDistanceToNow(new Date(timestamp), {
       addSuffix: true,
     });
   }
-  
+
   return '';
 };
 
