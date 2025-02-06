@@ -48,8 +48,7 @@ export default function CuisinePage() {
               <PriceRange priceRange={location.priceRange} />
             </div>
             <div className="text-sm text-gray-500 mb-4">
-              <p>{location.address.street}</p>
-              <p>{`${location.address.district}, ${location.address.city}`}</p>
+              <p>{location.fullAddress}</p>
             </div>
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">

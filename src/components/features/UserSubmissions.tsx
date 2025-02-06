@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useEffect, useState, useRef } from 'react';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
