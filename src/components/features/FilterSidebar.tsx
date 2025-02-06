@@ -34,6 +34,7 @@ export default function FilterSidebar() {
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
 
+    // Only add parameters if they have values
     if (selectedDistrict) {
       params.set('district', selectedDistrict);
     } else {
@@ -59,8 +60,16 @@ export default function FilterSidebar() {
     }
 
     const queryString = params.toString();
-    router.push(`/locations${queryString ? `?${queryString}` : ''}`);
-  }, [selectedDistrict, selectedType, selectedCuisine, priceRange, router, searchParams]);
+    const newUrl = `/locations${queryString ? `?${queryString}` : ''}`;
+    
+    // Use replaceState to update URL without adding to history
+    window.history.replaceState({ 
+      district: selectedDistrict,
+      type: selectedType,
+      cuisine: selectedCuisine,
+      price: priceRange
+    }, '', newUrl);
+  }, [selectedDistrict, selectedType, selectedCuisine, priceRange, searchParams]);
 
   const toggleSection = (section: FilterSection) => {
     setExpandedSections((prev) =>
@@ -69,8 +78,13 @@ export default function FilterSidebar() {
   };
 
   const handleReset = () => {
-    resetFilters();
-    router.push('/locations');
+    // Reset all filters individually
+    setSelectedDistrict(null);
+    setSelectedCuisine(null);
+    setSelectedType(null);
+    setPriceRange(null);
+    // Update URL
+    window.history.replaceState({}, '', '/locations');
   };
 
   const FilterHeader = ({ title, section }: { title: string; section: FilterSection }) => {

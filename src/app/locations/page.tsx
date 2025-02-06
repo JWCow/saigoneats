@@ -7,7 +7,7 @@ import { useLocationStore } from '@/lib/store';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { District, Cuisine, Location, LocationType } from '@/data/locations';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import UserSubmissions from '@/components/features/UserSubmissions';
 
 export default function LocationsPage() {
@@ -15,7 +15,46 @@ export default function LocationsPage() {
   const setSelectedDistrict = useLocationStore((state) => state.setSelectedDistrict);
   const setSelectedCuisine = useLocationStore((state) => state.setSelectedCuisine);
   const setSelectedType = useLocationStore((state) => state.setSelectedType);
+  const resetFilters = useLocationStore((state) => state.resetFilters);
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Handle back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      // First, reset all filters
+      setSelectedDistrict(null);
+      setSelectedCuisine(null);
+      setSelectedType(null);
+      
+      // Then reapply filters from URL if they exist
+      const params = new URLSearchParams(window.location.search);
+      const type = params.get('type');
+      const district = params.get('district');
+      const cuisine = params.get('cuisine');
+
+      // Only set filters if they exist in the URL
+      if (type && Object.values(LocationType).includes(type.toLowerCase() as LocationType)) {
+        setSelectedType(type.toLowerCase() as LocationType);
+      }
+
+      if (district && Object.values(District).includes(district as District)) {
+        setSelectedDistrict(district as District);
+      }
+
+      if (cuisine) {
+        const matchingCuisine = Object.values(Cuisine).find(
+          (c) => c.toLowerCase() === cuisine.toLowerCase()
+        );
+        if (matchingCuisine) {
+          setSelectedCuisine(matchingCuisine);
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [setSelectedDistrict, setSelectedCuisine, setSelectedType]);
 
   useEffect(() => {
     // Load locations from Firebase
