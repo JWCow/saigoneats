@@ -55,8 +55,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Community Suggestions Section */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+              Community Suggestions
+            </h2>
+            <div className="flex justify-between items-center">
+              <p className="text-gray-600">Places discovered and shared by fellow food lovers</p>
+              <Link href="/new" className="text-orange-600 hover:text-orange-700 font-medium">
+                See all →
+              </Link>
+            </div>
+          </div>
+          <UserSubmissions />
+        </div>
+      </section>
+
       {/* Districts Overview */}
-      <section className="py-8 bg-white">
+      <section className="py-8 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             Where do you want to eat?
@@ -81,7 +99,7 @@ export default function Home() {
       </section>
 
       {/* Cuisines Section */}
-      <section className="py-8 bg-gray-50">
+      <section className="py-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             What are you craving?
@@ -102,24 +120,6 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Latest Additions Section */}
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                Latest Additions
-              </h2>
-              <p className="text-gray-600">Recent locations suggested by our community</p>
-            </div>
-            <Link href="/new" className="text-orange-600 hover:text-orange-700 font-medium">
-              View all →
-            </Link>
-          </div>
-          <UserSubmissions />
         </div>
       </section>
     </div>
