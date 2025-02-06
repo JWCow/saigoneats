@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ThumbsUp } from 'lucide-react';
 import { doc, updateDoc, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
@@ -8,7 +8,7 @@ import { Location } from '@/data/locations';
 
 interface VoteButtonProps {
   location: Location;
-  userId?: string; // We'll use this later for user authentication
+  userId?: string;
   className?: string;
 }
 
@@ -16,9 +16,18 @@ export default function VoteButton({ location, userId, className = '' }: VoteBut
   const storageKey = `voted_${location.id}`;
   const [isVoting, setIsVoting] = useState(false);
   const [localVoteCount, setLocalVoteCount] = useState(location.votes || 0);
-  const [localHasVoted, setLocalHasVoted] = useState(
-    location.votedBy?.includes(userId || '') || localStorage.getItem(storageKey) === 'true'
-  );
+  const [localHasVoted, setLocalHasVoted] = useState(false);
+
+  // Initialize vote state from Firebase data
+  useEffect(() => {
+    const hasVotedFromFirebase = location.votedBy?.includes(userId || '') ?? false;
+    if (hasVotedFromFirebase) {
+      localStorage.setItem(storageKey, 'true');
+    } else {
+      localStorage.removeItem(storageKey);
+    }
+    setLocalHasVoted(hasVotedFromFirebase);
+  }, [location.votedBy, userId, storageKey]);
 
   const handleVote = useCallback(
     async (e: React.MouseEvent) => {
