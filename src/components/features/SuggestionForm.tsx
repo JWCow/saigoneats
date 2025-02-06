@@ -354,7 +354,7 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
                     onClick={() => setIsManualEntry(true)}
                     className="text-sm text-orange-600 hover:text-orange-700"
                   >
-                    Can't find the location? Enter details manually
+                    Can&apos;t find the location? Enter details manually
                   </button>
                 </>
               ) : (
