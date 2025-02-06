@@ -18,6 +18,10 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-lexend)', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: 'rgb(229 229 229)',
         input: 'rgb(229 229 229)',

@@ -19,7 +19,7 @@ const sizes = {
 
 export default function Logo({ className, showText = true, size = 'md' }: LogoProps) {
   const { height, width } = sizes[size];
-  
+
   return (
     <Link href="/" className={cn('flex items-center', className)}>
       <div className="relative flex items-center justify-center h-full w-full">
@@ -41,4 +41,4 @@ export default function Logo({ className, showText = true, size = 'md' }: LogoPr
       )}
     </Link>
   );
-} 
+}

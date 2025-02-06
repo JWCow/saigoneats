@@ -69,7 +69,7 @@ export default function Home() {
             className="text-center space-y-4"
           >
             <div className="space-y-3">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+              <h1 className="font-heading text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                 <span className="block">Discover the Best Food in</span>
                 <span className="block text-gradient">Ho Chi Minh City</span>
               </h1>
@@ -88,7 +88,7 @@ export default function Home() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  <CardTitle className="font-heading text-2xl sm:text-3xl font-bold text-gray-900">
                     Community Suggestions
                   </CardTitle>
                   <CardDescription>
@@ -112,7 +112,7 @@ export default function Home() {
       {/* Districts Overview */}
       <section className="py-12 bg-gray-50/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
             Where do you want to eat?
           </h2>
           <motion.div
@@ -147,7 +147,7 @@ export default function Home() {
       {/* Cuisines Section */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
             What are you craving?
           </h2>
           <motion.div
