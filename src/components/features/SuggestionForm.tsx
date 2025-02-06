@@ -61,7 +61,7 @@ const formatCategoryName = (category: string): string => {
   // Split by space or underscore and capitalize each word
   return category
     .split(/[\s_]/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 };
 
@@ -167,11 +167,11 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
 
       // Detect category and cuisine from place types
       const { detectedCategory, detectedCuisine } = detectCategoryAndCuisine(placeDetails.types);
-      
+
       if (detectedCategory) {
         setCategory(detectedCategory);
       }
-      
+
       if (detectedCuisine) {
         setCuisine(detectedCuisine);
       }
@@ -182,7 +182,9 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
         formatted_address: placeDetails.formatted_address || suggestion.description,
         formatted_phone_number: placeDetails.formatted_phone_number || '',
         website: placeDetails.website || '',
-        url: placeDetails.url || `https://www.google.com/maps/place/?q=place_id:${suggestion.place_id}`,
+        url:
+          placeDetails.url ||
+          `https://www.google.com/maps/place/?q=place_id:${suggestion.place_id}`,
         place_id: suggestion.place_id,
         types: placeDetails.types,
       };
@@ -204,7 +206,8 @@ export default function SuggestionForm({ isOpen, onClose }: SuggestionFormProps)
       };
       setPlace(basicPlace);
       setToast({
-        message: 'Some location details could not be loaded, but you can still submit the suggestion.',
+        message:
+          'Some location details could not be loaded, but you can still submit the suggestion.',
         type: 'error',
       });
     }

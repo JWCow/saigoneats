@@ -71,13 +71,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
-      <head>
+      <body className={`${inter.className} min-h-full flex flex-col`}>
         <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           strategy="afterInteractive"
+          async
+          defer
         />
-      </head>
-      <body className={`${inter.className} min-h-full flex flex-col`}>
         <Header />
         <main className="flex-grow">{children}</main>
         <FloatingActionButton />
