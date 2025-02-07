@@ -24,7 +24,7 @@ export default function LocationsPage() {
       setSelectedDistrict(null);
       setSelectedCuisine(null);
       setSelectedType(null);
-      
+
       // Then reapply filters from URL if they exist
       const params = new URLSearchParams(window.location.search);
       const type = params.get('type');
