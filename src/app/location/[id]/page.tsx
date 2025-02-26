@@ -26,7 +26,7 @@ export default function LocationPage({ params }: LocationPageProps) {
         // Fetch location from Firebase
         const locationRef = doc(db, 'locations', params.id);
         const locationDoc = await getDoc(locationRef);
-        
+
         if (locationDoc.exists()) {
           // Convert Firestore document to Location type
           const locationData = { id: locationDoc.id, ...locationDoc.data() } as Location;
@@ -34,15 +34,15 @@ export default function LocationPage({ params }: LocationPageProps) {
         } else {
           setLocation(null);
           setToast({
-            message: "The requested location could not be found.",
-            type: "error"
+            message: 'The requested location could not be found.',
+            type: 'error',
           });
         }
       } catch (error) {
         console.error('Error fetching location:', error);
         setToast({
-          message: "There was a problem loading the location details.",
-          type: "error"
+          message: 'There was a problem loading the location details.',
+          type: 'error',
         });
         setLocation(null);
       } finally {

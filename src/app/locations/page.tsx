@@ -113,10 +113,18 @@ export default function LocationsPage() {
       .join(' ');
   };
 
+  // Helper function to format district names
+  const formatDistrictName = (district: string) => {
+    return district
+      .split(/[\s_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   // Generate header text based on filters
   const getHeaderText = () => {
     if (cuisine) return `${formatName(cuisine)} Restaurants`;
-    if (district) return `Restaurants in ${district}`;
+    if (district) return `Restaurants in ${formatDistrictName(district)}`;
     if (type) return `${formatName(type)}s`;
     return 'All Locations';
   };

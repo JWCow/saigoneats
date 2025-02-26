@@ -28,6 +28,14 @@ export default function FilterSidebar() {
   const [expandedSections, setExpandedSections] = useState<FilterSection[]>(['district']);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
+  // Helper function to format district names
+  const formatDistrictName = (district: string) => {
+    return district
+      .split(/[\s_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -134,7 +142,7 @@ export default function FilterSidebar() {
                     }
                     className="form-checkbox text-orange-600 rounded"
                   />
-                  <span className="ml-2 text-sm">{district}</span>
+                  <span className="ml-2 text-sm">{formatDistrictName(district)}</span>
                 </label>
               ))}
             </div>
