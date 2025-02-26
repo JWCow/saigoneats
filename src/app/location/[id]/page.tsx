@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Location } from '@/data/locations';
-import { locations } from '@/data/locations';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase/config';
 import LocationDetails from '@/components/features/LocationDetails';
 import Link from 'next/link';
+import Toast from '@/components/ui/Toast';
 
 interface LocationPageProps {
   params: {
@@ -15,16 +17,40 @@ interface LocationPageProps {
 export default function LocationPage({ params }: LocationPageProps) {
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
-    const findLocation = () => {
+    const fetchLocation = async () => {
       setIsLoading(true);
-      const foundLocation = locations.find((loc) => loc.id === params.id);
-      setLocation(foundLocation || null);
-      setIsLoading(false);
+      try {
+        // Fetch location from Firebase
+        const locationRef = doc(db, 'locations', params.id);
+        const locationDoc = await getDoc(locationRef);
+        
+        if (locationDoc.exists()) {
+          // Convert Firestore document to Location type
+          const locationData = { id: locationDoc.id, ...locationDoc.data() } as Location;
+          setLocation(locationData);
+        } else {
+          setLocation(null);
+          setToast({
+            message: "The requested location could not be found.",
+            type: "error"
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching location:', error);
+        setToast({
+          message: "There was a problem loading the location details.",
+          type: "error"
+        });
+        setLocation(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    findLocation();
+    fetchLocation();
   }, [params.id]);
 
   if (isLoading) {
@@ -56,6 +82,7 @@ export default function LocationPage({ params }: LocationPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <LocationDetails location={location} />
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }

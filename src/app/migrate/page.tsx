@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { locations } from '@/data/locations';
+import { Location } from '@/data/locations';
 import { db } from '@/lib/firebase/config';
 import { doc, setDoc, getDocs, collection, query, where } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
@@ -74,28 +74,11 @@ export default function MigratePage() {
         ]);
       }
 
-      // Now migrate static locations
+      // Note about static locations
       setMigrationLog((prev) => [
         ...prev,
-        `\nFound ${locations.length} static locations to migrate:`,
+        `\nStatic locations have already been migrated to Firebase.`,
       ]);
-
-      for (const location of locations) {
-        const locationWithMeta = {
-          ...location,
-          votes: 0,
-          votedBy: [],
-          priceRange: location.priceRange || 'medium',
-          status: 'approved',
-          source: 'static',
-        };
-
-        await setDoc(doc(db, 'locations', location.id), locationWithMeta);
-        setMigrationLog((prev) => [
-          ...prev,
-          `✓ Successfully migrated static location: ${location.name}`,
-        ]);
-      }
 
       // Verify final migration count
       const locationsSnapshot = await getDocs(collection(db, 'locations'));
@@ -105,7 +88,6 @@ export default function MigratePage() {
         ...prev,
         `\nMigration complete!`,
         `Total locations in database: ${totalLocations}`,
-        `- Static locations: ${locations.length}`,
         `- Migrated suggestions: ${suggestionsSnapshot.size}`,
         `✓ All locations successfully migrated!`,
       ]);
@@ -120,13 +102,19 @@ export default function MigratePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Migrate Locations to Firebase</h1>
+      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+        <p className="text-yellow-700">
+          <strong>Note:</strong> Static locations have already been migrated to Firebase. This page
+          now only handles migration of approved user suggestions.
+        </p>
+      </div>
       <div className="space-y-4">
         <Button
           onClick={migrateLocations}
           disabled={isLoading}
           className="bg-orange-600 hover:bg-orange-700 text-white"
         >
-          {isLoading ? 'Migrating...' : 'Start Migration'}
+          {isLoading ? 'Migrating...' : 'Migrate Approved Suggestions'}
         </Button>
         {migrationLog.length > 0 && (
           <div className="mt-4 p-4 bg-gray-100 rounded">

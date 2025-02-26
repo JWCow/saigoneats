@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Lexend } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
@@ -72,11 +72,6 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
   robots: {
     index: true,
     follow: true,
@@ -91,8 +86,17 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-site-verification',
   },
-  themeColor: '#ea580c',
 };
+
+// Separate viewport configuration
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+// Separate theme color configuration
+export const themeColor = '#ea580c';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

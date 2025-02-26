@@ -4,24 +4,48 @@ import React from 'react';
 import Link from 'next/link';
 import { useLocationStore } from '@/lib/store';
 import { useEffect } from 'react';
-import { locations, District, Cuisine } from '@/data/locations';
+import { District, Cuisine, Location } from '@/data/locations';
 import { MapPin, Utensils } from 'lucide-react';
 import UserSubmissions from '@/components/features/UserSubmissions';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import InfiniteCarousel from '@/components/ui/InfiniteCarousel';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase/config';
 
 export default function Home() {
   const setLocations = useLocationStore((state) => state.setLocations);
 
   useEffect(() => {
-    setLocations(locations);
+    // Load locations from Firebase
+    const loadLocations = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'locations'));
+        const loadedLocations: Location[] = [];
+        querySnapshot.forEach((doc) => {
+          loadedLocations.push({ id: doc.id, ...doc.data() } as Location);
+        });
+        setLocations(loadedLocations);
+      } catch (error) {
+        console.error('Error loading locations:', error);
+      }
+    };
+
+    loadLocations();
   }, [setLocations]);
 
   // Helper function to format cuisine names
   const formatCuisineName = (cuisine: string) => {
     return cuisine
+      .split(/[\s_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  // Helper function to format district names
+  const formatDistrictName = (district: string) => {
+    return district
       .split(/[\s_]/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
@@ -139,7 +163,7 @@ export default function Home() {
                       <div className="flex items-center gap-1.5 sm:gap-2">
                         <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-orange-500 group-hover:scale-110 transition-transform" />
                         <span className="text-sm sm:text-base font-medium text-gray-900 group-hover:text-orange-600 transition-colors truncate">
-                          {district}
+                          {formatDistrictName(district)}
                         </span>
                       </div>
                     </CardContent>

@@ -1,28 +1,22 @@
 'use client';
 
-import { locations } from '@/data/locations';
+// This script was used to migrate the static locations to Firebase.
+// It is no longer needed as the migration has already been completed.
+// The static locations array has been removed from the codebase.
+
 import { db } from '@/lib/firebase/config';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
 
-async function migrateLocations() {
+async function checkMigrationStatus() {
   try {
-    for (const location of locations) {
-      // Add votes and votedBy fields to each location
-      const locationWithVoting = {
-        ...location,
-        votes: 0,
-        votedBy: [],
-      };
-
-      // Add to Firestore with the same ID
-      await setDoc(doc(db, 'locations', location.id), locationWithVoting);
-      console.log(`Migrated location: ${location.name}`);
-    }
-    console.log('Migration complete!');
+    // Check how many locations are in Firestore
+    const querySnapshot = await getDocs(collection(db, 'locations'));
+    console.log(`There are currently ${querySnapshot.size} locations in the database.`);
+    console.log('Migration has already been completed.');
   } catch (error) {
-    console.error('Error during migration:', error);
+    console.error('Error checking migration status:', error);
   }
 }
 
-// Run the migration
-migrateLocations();
+// Check migration status
+checkMigrationStatus();
